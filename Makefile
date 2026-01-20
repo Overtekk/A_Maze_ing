@@ -6,7 +6,7 @@
 #    By: roandrie <roandrie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/20 16:18:29 by roandrie          #+#    #+#              #
-#    Updated: 2026/01/20 17:15:36 by roandrie         ###   ########.fr        #
+#    Updated: 2026/01/20 17:42:20 by roandrie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ PIP = $(if $(wildcard $(VENV_PIP)), $(VENV_PIP), pip)
 MYPY_FLAGS= --warn-return-any --warn-unused-ignores --ignore-missing-imports \
 			--disallow-untyped-defs --check-untyped-defs
 
-SRC_FILES=main.py
+SRC_FILES=a_maze_ing.py
 CONFIG=config.txt
 
 # Prevent rule to be associated with files.
@@ -35,13 +35,13 @@ install:
 # Run the main script of the project.
 run:
 				@echo ""
-				@$(PYTHON) main.py
+				@$(PYTHON) a_maze_ing.py $(CONFIG)
 				@echo ""
 
 # Run the main script in debug mode.
 debug:
 				@echo "$(YELLOW)Running in DEBUG mode$(RESET)"
-				@$(PYTHON) -m pdb main.py
+				@$(PYTHON) -m pdb a_maze_ing.py
 
 # Remove temporary files or caches.
 clean:
