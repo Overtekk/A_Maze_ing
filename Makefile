@@ -6,7 +6,7 @@
 #    By: roandrie <roandrie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/20 16:18:29 by roandrie          #+#    #+#              #
-#    Updated: 2026/01/20 17:42:20 by roandrie         ###   ########.fr        #
+#    Updated: 2026/01/21 11:42:10 by roandrie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,11 +20,11 @@ PIP = $(if $(wildcard $(VENV_PIP)), $(VENV_PIP), pip)
 MYPY_FLAGS= --warn-return-any --warn-unused-ignores --ignore-missing-imports \
 			--disallow-untyped-defs --check-untyped-defs
 
-SRC_FILES=a_maze_ing.py
+SRC_FILES=a_maze_ing.py src/
 CONFIG=config.txt
 
 # Prevent rule to be associated with files.
-.PHONY: install run debug clean lint lint-strict venv all
+.PHONY: install run debug clean lint lint-strict venv pipfreeze all
 
 # Install all dependencies needed for this project.
 install:
@@ -66,6 +66,11 @@ lint-strict:
 venv:
 				@echo "$(BLUE)Create virtual environment$(RESET)"
 				@python3 -m venv .venv
+				@echo "$(BLUE)Run 'source .venv/bin/activate' to go to the virtual environment."
+
+# Create/update the requirements.txt
+pipfreeze:
+				@pip freeze > requirements.txt
 
 # Create venv and install dependencies.
 all: venv install
