@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:42:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 14:43:44 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/22 16:55:58 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -126,6 +126,20 @@ class Config(BaseModel):
 
         if entry_x == exit_x or entry_y == exit_y:
             raise ValueError("Entry and Exit cannot have the same position.")
+
+        if self.width < 7:
+            raise ValueError("Width too small. Increase it.")
+        if self.height < 5:
+            raise ValueError("Height too small. Increase it.")
+
+        from ..maze.generator import get_42_pattern
+
+        coords_fourty_two = get_42_pattern(self.width, self.height)
+        if self.entry in coords_fourty_two:
+            raise ValueError("Can't place Entry here. Reserved to '42'")
+
+        if self.exit in coords_fourty_two:
+            raise ValueError("Can't place Exit here. Reserved to '42'")
 
         return self
 
