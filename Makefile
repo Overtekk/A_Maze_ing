@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:18:29 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 11:43:57 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/22 13:27:11 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -34,7 +34,6 @@ install:
 
 # Run the main script of the project.
 run:
-				@echo ""
 				@$(PYTHON) a_maze_ing.py $(CONFIG)
 
 # Run the main script in debug mode.

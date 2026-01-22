@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:42:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 10:42:54 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/22 14:43:44 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -52,6 +52,7 @@ class Config(BaseModel):
     exit: Tuple[int, int] = Field(min_length=2, max_length=2)
     output_file: str
     perfect: bool
+    seed: str | int | None = Field(default=None)
 
     @field_validator('entry', 'exit', mode='before')
     @classmethod
@@ -118,9 +119,10 @@ class Config(BaseModel):
         exit_x, exit_y = self.exit
 
         if entry_x >= self.width or entry_y >= self.width:
-            raise ValueError("Invalid entry point.")
+            raise ValueError("Entry cannot be outside walls.")
+
         if exit_x >= self.width or exit_y >= self.width:
-            raise ValueError("Invalid exit point.")
+            raise ValueError("Exit cannot be outside walls.")
 
         if entry_x == exit_x or entry_y == exit_y:
             raise ValueError("Entry and Exit cannot have the same position.")
@@ -173,7 +175,7 @@ def check_config_file(config_file: str) -> Config | None:
                               invalid keys.
     """
     valid_config_key = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE",
-                        "PERFECT"]
+                        "PERFECT", "SEED"]
     line_count = 0
     config = {}
 
