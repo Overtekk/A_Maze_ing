@@ -1,3 +1,15 @@
+# ************************************************************************* #
+#                                                                           #
+#                                                      :::      ::::::::    #
+#  a_maze_ing.py                                     :+:      :+:    :+:    #
+#                                                  +:+ +:+         +:+      #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
+#                                              +#+#+#+#+#+   +#+            #
+#  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
+#  Updated: 2026/01/22 10:39:58 by roandrie        ###   ########.fr        #
+#                                                                           #
+# ************************************************************************* #
+
 """Main script for the Maze Generator.
 
 Call all the module to check and create everything. Then, construct the maze,
