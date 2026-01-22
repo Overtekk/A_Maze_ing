@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:42:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 16:55:58 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/22 22:56:55 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -132,9 +132,10 @@ class Config(BaseModel):
         if self.height < 5:
             raise ValueError("Height too small. Increase it.")
 
-        from ..maze.generator import get_42_pattern
+        from ..maze.maze_generator import MazeGenerator
 
-        coords_fourty_two = get_42_pattern(self.width, self.height)
+        coords_fourty_two = MazeGenerator.get_42_pattern(self.width,
+                                                         self.height)
         if self.entry in coords_fourty_two:
             raise ValueError("Can't place Entry here. Reserved to '42'")
 

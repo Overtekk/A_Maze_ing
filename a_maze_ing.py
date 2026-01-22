@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 16:21:56 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/22 23:27:45 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -37,17 +37,15 @@ def main() -> int:
             return 2
 
         from src.utils.config import check_arg, IllegalArgumentError
-        from src.maze.generator import MazeGenerator
+        from src.maze.maze_generator import MazeGenerator
 
         config = check_arg()
         if config is None:
             return 2
+        config_dict = config.model_dump()
 
-        generator = MazeGenerator.import_config(config)
-        print(f"Maze information: {generator.get_maze_parameters()}\n")
-        generator.generated_maze()
-        generator.print_42()
-        generator.print_maze()
+        generator = MazeGenerator(**config_dict)
+        generator.maze_generator()
 
     except (IllegalArgumentError, FileNotFoundError) as e:
 
