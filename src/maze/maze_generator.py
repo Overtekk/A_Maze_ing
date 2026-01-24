@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/24 16:31:55 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/24 17:20:10 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -25,6 +25,7 @@ class MazeGenerator():
 
     # Clear screen
     CLEAR = "\033[J"
+    CLEAR_All = "\033[2J\033[H"
 
     # Walls colors:
     wall_white = Fore.WHITE
@@ -69,18 +70,21 @@ class MazeGenerator():
 
         self.maze: Dict[Tuple[int, int], str] = {}
         self.wall_color = self.wall_white
+
         self.empty = ' '
         self.border = f'{self.wall_color}{self.wall_ASCII}'
         self.wall = f'{self.wall_color}{self.wall_ASCII}'
+
         self.entry = f'{Fore.MAGENTA}{self.wall_ASCII}'
         self.exit = f'{Fore.RED}{self.wall_ASCII}'
+
         self.fourty_two = f'{Fore.LIGHTWHITE_EX}{self.wall_ASCII}'
 
         self._validate_parameters()
 
     def maze_generator(self, rendering: bool = False) -> None:
-
         if rendering:
+            print(self.CLEAR_All, end="")
             while True:
                 user_choice = self._customize_maze_walls_color()
                 if user_choice == "ok":
@@ -89,7 +93,9 @@ class MazeGenerator():
         loading = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
         text_generating = " Generating Maze..."
         text_generated = "-Maze Generated-"
-        print("")
+
+        if rendering:
+            print(self.CLEAR_All, end="")
 
         visual_width = (self.width * 2) // 2
         filling = " " * max(0, ((visual_width - len(text_generating) // 2)))
@@ -101,14 +107,17 @@ class MazeGenerator():
                 time.sleep(0.1)
 
         filling = " " * max(0, ((visual_width - len(text_generated) // 2)))
-        print(f"\r{filling}  {text_generated}    ")
-        print(Style.RESET_ALL)
+        print(f"\r{filling}  {text_generated}    {Style.RESET_ALL}")
 
-        self._generated_maze()
+        self._construct_base_maze()
         self._print_42()
-
         if rendering:
             self._print_maze()
+        if self.perfect:
+            self._generate_perfect_maze()
+        else:
+            self._generate_maze()
+        print(Cursor.POS(1, self.height + 3 + 2))
 
     def get_maze_parameters(self) -> Dict[str, Any]:
         return {
@@ -120,6 +129,25 @@ class MazeGenerator():
             'Perfect Maze?': self.perfect,
             'Seed': self.seed
         }
+
+    def _generate_maze(self) -> None:
+
+        for i in range(150):
+            x = random.randint(1, self.width - 2)
+            y = random.randint(1, self.height - 2)
+            self._break_wall(x, y)
+
+    def _break_wall(self, x, y) -> None:
+        self.maze[(x, y)] = self.empty
+
+        curs_x = (x * 2) + 3
+        curs_y = y + 2 + 2
+
+        print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
+        time.sleep(0.05)
+
+    def _generate_perfect_maze(self) -> None:
+        pass
 
     def _print_maze(self) -> None:
         total_cases = self.width * self.height
@@ -173,7 +201,7 @@ class MazeGenerator():
             print(f"{Fore.RED}Invalid choice. Choose between 1 and 6.", end="",
                   flush=True)
             time.sleep(1)
-            print(Cursor.UP(4) + "\r" + self.CLEAR, end="")
+            print(Cursor.UP(5) + "\r" + self.CLEAR, end="")
         return "no"
 
     def _apply_wall_color(self, choice: int) -> None:
@@ -267,7 +295,7 @@ class MazeGenerator():
             if coord in self.maze:
                 self.maze[coord] = self.fourty_two
 
-    def _generated_maze(self) -> None:
+    def _construct_base_maze(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
                 self.maze[(x, y)] = self.wall
