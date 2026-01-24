@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:42:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 22:56:55 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/24 12:46:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -108,34 +108,30 @@ class Config(BaseModel):
         Raises:
             ValueError: If the output or the coordinates are invalid.
         """
-
-        if '.' not in self.output_file:
-            raise ValueError("'Output_File': Invalid format. Use: 'name.txt'")
-        check_output = self.output_file.split('.')
-        if check_output[1] != 'txt':
-            raise ValueError("'Output_File': Invalid extension (use '.txt')")
+        if not self.output_file.endswith('.txt'):
+            raise ValueError("'Output_File': Invalid extension. Must "
+                             "end with '.txt'")
 
         entry_x, entry_y = self.entry
         exit_x, exit_y = self.exit
 
-        if entry_x >= self.width or entry_y >= self.width:
-            raise ValueError("Entry cannot be outside walls.")
+        if entry_x >= self.width or entry_y >= self.height:
+            raise ValueError(f"Entry {self.entry} is outside maze dimensions.")
+        if exit_x >= self.width or exit_y >= self.height:
+            raise ValueError(f"Exit {self.exit} is outside maze dimensions.")
 
-        if exit_x >= self.width or exit_y >= self.width:
-            raise ValueError("Exit cannot be outside walls.")
+        if self.entry == self.exit:
+            raise ValueError("Entry and Exit cannot be at the exact same "
+                             "position.")
 
-        if entry_x == exit_x or entry_y == exit_y:
-            raise ValueError("Entry and Exit cannot have the same position.")
-
-        if self.width < 7:
-            raise ValueError("Width too small. Increase it.")
-        if self.height < 5:
-            raise ValueError("Height too small. Increase it.")
+        if self.width < 7 or self.height < 5:
+            raise ValueError("Dimensions too small for the '42' pattern.")
 
         from ..maze.maze_generator import MazeGenerator
 
-        coords_fourty_two = MazeGenerator.get_42_pattern(self.width,
-                                                         self.height)
+        coords_fourty_two = MazeGenerator._get_42_pattern(self.width,
+                                                          self.height)
+
         if self.entry in coords_fourty_two:
             raise ValueError("Can't place Entry here. Reserved to '42'")
 

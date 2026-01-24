@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/22 23:27:45 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/24 12:34:54 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -47,15 +47,15 @@ def main() -> int:
         generator = MazeGenerator(**config_dict)
         generator.maze_generator()
 
-    except (IllegalArgumentError, FileNotFoundError) as e:
+    except (IllegalArgumentError, FileNotFoundError, ValueError) as e:
 
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2
 
-    except Exception as e:
-        print(f"Unexpected error of type - {type(e).__name__}: {e}",
-              file=sys.stderr)
-        return 1
+    # except Exception as e:
+    #     print(f"Unexpected error of type - {type(e).__name__}: {e}",
+    #           file=sys.stderr)
+    #     return 1
 
     return 0
 
