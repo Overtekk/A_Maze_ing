@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/24 14:53:06 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/24 16:19:20 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -45,8 +45,7 @@ def main() -> int:
         config_dict = config.model_dump()
 
         generator = MazeGenerator(**config_dict)
-        generator.maze_generator()
-        generator.print_maze()
+        generator.maze_generator(rendering=True)
 
     except (IllegalArgumentError, FileNotFoundError, ValueError) as e:
 

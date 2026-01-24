@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/24 16:14:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/24 16:31:55 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -78,12 +78,13 @@ class MazeGenerator():
 
         self._validate_parameters()
 
-    def maze_generator(self) -> None:
+    def maze_generator(self, rendering: bool = False) -> None:
 
-        while True:
-            user_choice = self._customize_maze_walls_color()
-            if user_choice == "ok":
-                break
+        if rendering:
+            while True:
+                user_choice = self._customize_maze_walls_color()
+                if user_choice == "ok":
+                    break
 
         loading = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
         text_generating = " Generating Maze..."
@@ -106,7 +107,21 @@ class MazeGenerator():
         self._generated_maze()
         self._print_42()
 
-    def print_maze(self) -> None:
+        if rendering:
+            self._print_maze()
+
+    def get_maze_parameters(self) -> Dict[str, Any]:
+        return {
+            'Width': self.width,
+            'Height': self.height,
+            'Entry Coordinates': self.entry_coord,
+            'Exit Coordinates': self.exit_coord,
+            'Output file': self.output_file,
+            'Perfect Maze?': self.perfect,
+            'Seed': self.seed
+        }
+
+    def _print_maze(self) -> None:
         total_cases = self.width * self.height
         if total_cases < 600:
             animate_char_by_char = True
@@ -137,17 +152,6 @@ class MazeGenerator():
 
         print(self.border * (self.width + 2), flush=True)
         print(Style.RESET_ALL)
-
-    def get_maze_parameters(self) -> Dict[str, Any]:
-        return {
-            'Width': self.width,
-            'Height': self.height,
-            'Entry Coordinates': self.entry_coord,
-            'Exit Coordinates': self.exit_coord,
-            'Output file': self.output_file,
-            'Perfect Maze?': self.perfect,
-            'Seed': self.seed
-        }
 
     def _customize_maze_walls_color(self) -> str:
         print(f"{self.txt_white}Choose walls color:")
