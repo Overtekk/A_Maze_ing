@@ -1,7 +1,7 @@
 *This project has been created as part of the 42 curriculum by roandrie, rruiz*
 
 <p align="center">
-  <img src="assets_github/a_maze_ing.png" width="350" />
+  <img src="assets_github/a_maze_ing.png" width="200" />
 </p>
 <h3 align="center">
   <em>Create your own maze generator and display its result!</em>
