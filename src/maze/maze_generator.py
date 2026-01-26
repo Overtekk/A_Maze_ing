@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/24 17:20:10 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/26 12:06:35 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -20,14 +20,14 @@ from colorama import Fore, Style, Cursor
 
 class MazeGenerator():
 
-    # Texte colors:
+    # Texte colors
     txt_white = f"{Fore.WHITE} {Style.BRIGHT}"
 
     # Clear screen
     CLEAR = "\033[J"
     CLEAR_All = "\033[2J\033[H"
 
-    # Walls colors:
+    # Walls colors
     wall_white = Fore.WHITE
     wall_blue = Fore.BLUE
     wall_yellow = Fore.LIGHTYELLOW_EX
@@ -35,7 +35,7 @@ class MazeGenerator():
     wall_cyan = Fore.CYAN
     wall_green = Fore.LIGHTGREEN_EX
 
-    # Walls ASCII:
+    # Walls ASCII
     wall_ASCII = "\u2588\u2588"
 
     def __init__(self, width: int, height: int, entry: Tuple[int, int],
@@ -49,6 +49,7 @@ class MazeGenerator():
         self._check_arg(output_file, 'output_file')
         self._check_arg(perfect, 'perfect')
 
+        # Maze parameters
         self.width = width
         self.height = height
         self.entry_coord = entry
@@ -63,23 +64,23 @@ class MazeGenerator():
         # Unpacking coords.
         entry_x, entry_y = self.entry_coord
         exit_x, exit_y = self.exit_coord
-        self.entry_x = entry_x
-        self.entry_y = entry_y
-        self.exit_x = exit_x
-        self.exit_y = exit_y
+        self.entry_x, self.entry_y = entry_x, entry_y
+        self.exit_x, self.exit_y = exit_x, exit_y
+        self.fourtytwo_coord = self._get_42_pattern(self.width, self.height)
 
         self.maze: Dict[Tuple[int, int], str] = {}
+        # Default color
         self.wall_color = self.wall_white
 
+        # Maze structure
         self.empty = ' '
         self.border = f'{self.wall_color}{self.wall_ASCII}'
         self.wall = f'{self.wall_color}{self.wall_ASCII}'
-
         self.entry = f'{Fore.MAGENTA}{self.wall_ASCII}'
         self.exit = f'{Fore.RED}{self.wall_ASCII}'
+        self.fourtytwo_block = f'{Fore.LIGHTWHITE_EX}{self.wall_ASCII}'
 
-        self.fourty_two = f'{Fore.LIGHTWHITE_EX}{self.wall_ASCII}'
-
+        # Check is parameters are valid
         self._validate_parameters()
 
     def maze_generator(self, rendering: bool = False) -> None:
@@ -109,6 +110,7 @@ class MazeGenerator():
         filling = " " * max(0, ((visual_width - len(text_generated) // 2)))
         print(f"\r{filling}  {text_generated}    {Style.RESET_ALL}")
 
+        random.seed(self.seed)
         self._construct_base_maze()
         self._print_42()
         if rendering:
@@ -116,8 +118,9 @@ class MazeGenerator():
         if self.perfect:
             self._generate_perfect_maze()
         else:
-            self._generate_maze()
-        print(Cursor.POS(1, self.height + 3 + 2))
+            self._generate_maze(rendering)
+        if rendering:
+            print(Cursor.POS(1, self.height + 3 + 2))
 
     def get_maze_parameters(self) -> Dict[str, Any]:
         return {
@@ -130,21 +133,47 @@ class MazeGenerator():
             'Seed': self.seed
         }
 
-    def _generate_maze(self) -> None:
+    def _generate_maze(self, rendering: bool) -> None:
+        visited_cells = [(self.exit_x, self.exit_y)]
+        def visit(x: int, y: int):
+            walls_list = {}
+            if 0 <= x - 1 < self.width:
+                if self.maze[(x - 1, y)] is self.wall:
+                    walls_list.update({"west": x - 1})
 
-        for i in range(150):
-            x = random.randint(1, self.width - 2)
-            y = random.randint(1, self.height - 2)
-            self._break_wall(x, y)
+            if x + 1 < self.width:
+                if self.maze[(x + 1, y)] is self.wall:
+                    walls_list.update({"east": x + 1})
 
-    def _break_wall(self, x, y) -> None:
+            if 0 <= y - 1 < self.height:
+                if self.maze[(x, y - 1)] is self.wall:
+                    walls_list.update({"south" : y - 1})
+
+            if y + 1 < self.width:
+                if self.maze[(x, y + 1)] is self.wall:
+                    walls_list.update({"north": y + 1})
+
+            if len(walls_list) > 0:
+                direction = random.choice(list(walls_list))
+
+                if direction == "north" or direction == "south":
+                    self._break_wall(x, walls_list[direction], rendering)
+                    visited_cells.append([x, walls_list[direction]])
+                    visit(x, walls_list[direction])
+                else:
+                    self._break_wall(walls_list[direction], y, rendering)
+                    visited_cells.append([walls_list[direction], y])
+                    visit(walls_list[direction], y)
+        visit(self.exit_x, self.exit_y)
+
+    def _break_wall(self, x: int, y: int, rendering: bool) -> None:
         self.maze[(x, y)] = self.empty
 
-        curs_x = (x * 2) + 3
-        curs_y = y + 2 + 2
-
-        print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
-        time.sleep(0.05)
+        if rendering:
+            curs_x = (x * 2) + 3
+            curs_y = y + 2 + 2
+            print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
+            time.sleep(0.05)
 
     def _generate_perfect_maze(self) -> None:
         pass
@@ -168,7 +197,7 @@ class MazeGenerator():
 
             if animate_char_by_char:
                 for x in range(self.width):
-                    print(self.maze[(x, y)], end='', flush=True)
+                    print(self.maze[(x, y)], end="", flush=True)
                     time.sleep(delay)
             else:
                 raw_line = "".join([self.maze[(x, y)] for x in
@@ -215,7 +244,7 @@ class MazeGenerator():
         }
         self.wall_color = colors.get(choice, self.wall_white)
 
-        self.border = f'{self.wall_color}{self.wall_ASCII}'
+        # self.border = f'{self.wall_color}{self.wall_ASCII}'
         self.wall = f'{self.wall_color}{self.wall_ASCII}'
 
     def _check_arg(self, value: Any, name: str) -> None:
@@ -249,11 +278,9 @@ class MazeGenerator():
         if self.width < 7 or self.height < 5:
             raise ValueError("Dimensions too small for the '42' pattern.")
 
-        coords_fourty_two = self._get_42_pattern(self.width, self.height)
-
-        if self.entry_coord in coords_fourty_two:
+        if self.entry_coord in self.fourtytwo_coord:
             raise ValueError("Can't place Entry here. Reserved to '42'")
-        if self.exit_coord in coords_fourty_two:
+        if self.exit_coord in self.fourtytwo_coord:
             raise ValueError("Can't place Exit here. Reserved to '42'")
 
     def _generate_random_seed(self) -> None:
@@ -289,11 +316,9 @@ class MazeGenerator():
         return pattern
 
     def _print_42(self) -> None:
-        pattern_coords = self._get_42_pattern(self.width, self.height)
-
-        for coord in pattern_coords:
+        for coord in self.fourtytwo_coord:
             if coord in self.maze:
-                self.maze[coord] = self.fourty_two
+                self.maze[coord] = self.fourtytwo_block
 
     def _construct_base_maze(self) -> None:
         for y in range(self.height):

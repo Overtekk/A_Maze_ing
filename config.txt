@@ -5,10 +5,10 @@ WIDTH=20
 HEIGHT=20
 
 # Entry coordinates (x,y)
-ENTRY=10,0
+ENTRY=0,0
 
 # Exit coordinates (x,y)
-EXIT=7,1
+EXIT=15,12
 
 # Output filename
 OUTPUT_FILE=maze.txt
