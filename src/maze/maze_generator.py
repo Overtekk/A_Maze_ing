@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/26 14:02:23 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/26 15:51:55 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -36,12 +36,11 @@ class MazeGenerator():
     wall_cyan = Fore.CYAN
     wall_green = Fore.LIGHTGREEN_EX
 
-    # Walls ASCII
-    wall_ASCII = "\u2588\u2588"
-
     def __init__(self, width: int, height: int, entry: Tuple[int, int],
                  exit: Tuple[int, int], output_file: str, perfect: bool,
-                 seed: Optional[str | int] = None) -> None:
+                 seed: Optional[str | int] = None,
+                 display: Optional[str] = None,
+                 algorithm: Optional[str] = None) -> None:
         # Check arguments first
         self._check_arg(width, 'width')
         self._check_arg(height, 'height')
@@ -58,9 +57,16 @@ class MazeGenerator():
         self.output_file = output_file
         self.perfect = perfect
         self.seed = seed
+        self.display = display
+        self.algorithm = algorithm
         # Generate seed if user didn't give it.
         if self.seed is None:
             self._generate_random_seed()
+
+        if self.display is None:
+            self.display = "ascii"
+        if self.algorithm is None:
+            self.algorithm = "rb"
 
         # Unpacking coords.
         entry_x, entry_y = self.entry_coord
@@ -74,6 +80,8 @@ class MazeGenerator():
         self.wall_color = self.wall_white
 
         # Maze structure
+        self.wall_ASCII = "\u2588\u2588"
+
         self.empty = ' '
         self.border = f'{self.wall_color}{self.wall_ASCII}'
         self.wall = f'{self.wall_color}{self.wall_ASCII}'
@@ -86,22 +94,33 @@ class MazeGenerator():
 
     def maze_generator(self, rendering: bool = False) -> None:
         if rendering:
-            print(self.CLEAR_All, end="")
-            while True:
-                user_choice = self._customize_maze_walls_color()
-                if user_choice == "ok":
-                    break
+            if self.display == "ascii":
+                print(self.CLEAR_All, end="")
+                while True:
+                    user_choice = self._customize_maze_walls_color()
+                    if user_choice == "ok":
+                        break
+            if self.display == "emoji":
+                self._update_graphics()
 
         loading = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
         text_generating = " Generating Maze..."
         text_generated = "-Maze Generated-"
+        text_algo_display = f"Mode: {self.algorithm}"
+        if rendering:
+            text_algo_display += f" | Display: {self.display}"
+
+        # Align cursor based of texts writted
+        self.y_offset = 3
 
         if rendering:
             print(self.CLEAR_All, end="")
 
+        # Calcule the center of the maze to align text
         visual_width = (self.width * 2) // 2
         filling = " " * max(0, ((visual_width - len(text_generating) // 2)))
 
+        # Print the loading text
         for _ in range(2):
             for char in loading:
                 print(f"\r{filling}{self.txt_white}{char}{text_generating}",
@@ -109,19 +128,25 @@ class MazeGenerator():
                 time.sleep(0.1)
 
         filling = " " * max(0, ((visual_width - len(text_generated) // 2)))
-        print(f"\r{filling}  {text_generated}    {Style.RESET_ALL}")
+        print(f"\r{filling}  {text_generated}    ")
+
+        filling = " " * max(0, ((visual_width - len(text_algo_display) // 2)))
+        print(f"\r{filling}{text_algo_display}{Style.RESET_ALL}")
 
         random.seed(self.seed)
         self._construct_base_maze()
-        self._print_42()
+
         if rendering:
             self._print_maze()
-        if self.perfect:
-            self._generate_perfect_maze()
-        else:
-            self._generate_maze(rendering)
+
+        if self.algorithm == "rb":
+            if self.perfect:
+                self._generate_perfect_maze_rb()
+            else:
+                self._generate_maze_rb(rendering)
+
         if rendering:
-            print(Cursor.POS(1, self.height + 3 + 2))
+            print(Cursor.POS(1, self.height + 3 + self.y_offset))
 
     def get_maze_parameters(self) -> Dict[str, Any]:
         return {
@@ -131,30 +156,43 @@ class MazeGenerator():
             'Exit Coordinates': self.exit_coord,
             'Output file': self.output_file,
             'Perfect Maze?': self.perfect,
-            'Seed': self.seed
+            'Seed': self.seed,
+            'Display mode': self.display,
+            'Algorithm': self.algorithm
         }
 
-    def _generate_maze(self, rendering: bool) -> None:
+    def _generate_maze_rb(self, rendering: bool) -> None:
         sys.setrecursionlimit(100000)
 
-        visited_cells = [(self.exit_x, self.exit_y)]
         def visit(x: int, y: int):
             walls_list = {}
             walls_random = []
             if 0 <= x - 2 < self.width:
-                if self.maze[(x - 2, y)] is self.wall:
+                if (self.maze[(x - 2, y)] == self.wall and
+                    self.maze[(x - 1, y)] == self.wall and
+                    (x - 2, y) not in self.fourtytwo_coord and
+                    (x - 1, y) not in self.fourtytwo_coord):
                     walls_list.update({"west": x - 2})
 
             if x + 2 < self.width:
-                if self.maze[(x + 2, y)] is self.wall:
+                if (self.maze[(x + 2, y)] == self.wall and
+                    self.maze[(x + 1, y)] == self.wall and
+                    (x + 2, y) not in self.fourtytwo_coord and
+                    (x + 1, y) not in self.fourtytwo_coord):
                     walls_list.update({"east": x + 2})
 
             if 0 <= y - 2 < self.height:
-                if self.maze[(x, y - 2)] is self.wall:
+                if (self.maze[(x, y - 2)] == self.wall and
+                    self.maze[(x, y - 1)] == self.wall and
+                    (x, y - 2) not in self.fourtytwo_coord and
+                    (x, y - 1) not in self.fourtytwo_coord):
                     walls_list.update({"south" : y - 2})
 
             if y + 2 < self.height:
-                if self.maze[(x, y + 2)] is self.wall:
+                if (self.maze[(x, y + 2)] == self.wall and
+                    self.maze[(x, y + 1)] == self.wall and
+                    (x, y + 2) not in self.fourtytwo_coord and
+                    (x, y + 1) not in self.fourtytwo_coord):
                     walls_list.update({"north": y + 2})
 
             if len(walls_list) > 0:
@@ -163,32 +201,31 @@ class MazeGenerator():
 
                 for item in walls_random:
                     if item == "north" or item == "south":
-                        if self.maze[x, (walls_list[item])] is self.wall:
+                        if self.maze[x, (walls_list[item])] == self.wall:
                             self._break_wall(x, walls_list[item], rendering)
                             mid_y = (y + walls_list[item]) // 2
                             self._break_wall(x, mid_y, rendering)
-                            visited_cells.append([x, walls_list[item]])
                             visit(x, walls_list[item])
                     else:
-                        if self.maze[walls_list[item], y] is self.wall:
+                        if self.maze[walls_list[item], y] == self.wall:
                             self._break_wall(walls_list[item], y, rendering)
                             mid_x = (x + walls_list[item]) // 2
                             self._break_wall(mid_x, y, rendering)
-                            visited_cells.append([walls_list[item], y])
                             visit(walls_list[item], y)
 
         visit(self.exit_x, self.exit_y)
 
     def _break_wall(self, x: int, y: int, rendering: bool) -> None:
-        self.maze[(x, y)] = self.empty
+        if (x, y) not in self.fourtytwo_coord:
+            self.maze[(x, y)] = self.empty
 
-        if rendering:
-            curs_x = (x * 2) + 3
-            curs_y = y + 2 + 2
-            print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
-            time.sleep(0.001)
+            if rendering:
+                curs_x = (x * 2) + 3
+                curs_y = y + 2 + self.y_offset
+                print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
+                time.sleep(0.001)
 
-    def _generate_perfect_maze(self) -> None:
+    def _generate_perfect_maze_rb(self) -> None:
         pass
 
     def _print_maze(self) -> None:
@@ -223,29 +260,6 @@ class MazeGenerator():
         print(self.border * (self.width + 2), flush=True)
         print(Style.RESET_ALL)
 
-    def _customize_maze_walls_color(self) -> str:
-        print(f"{self.txt_white}Choose walls color:")
-        print(f"1. {Fore.WHITE}White\t {Fore.BLUE}3. Blue\t "
-              f"{Fore.LIGHTYELLOW_EX}5. Yellow")
-        print(f"2. {Fore.MAGENTA}Magenta\t {Fore.CYAN}4. Cyan\t "
-              f"{Fore.LIGHTGREEN_EX}6. Green")
-
-        user_choice = input(f"{self.txt_white}Enter choice: ")
-        try:
-            choice = int(user_choice)
-            if choice >= 1 and choice <= 6:
-                print(Cursor.UP(4) + self.CLEAR, end="")
-                self._apply_wall_color(choice)
-                return "ok"
-            else:
-                raise ValueError
-        except ValueError:
-            print(f"{Fore.RED}Invalid choice. Choose between 1 and 6.", end="",
-                  flush=True)
-            time.sleep(1)
-            print(Cursor.UP(5) + "\r" + self.CLEAR, end="")
-        return "no"
-
     def _apply_wall_color(self, choice: int) -> None:
         colors = {
             1: self.wall_white,
@@ -260,6 +274,44 @@ class MazeGenerator():
         # self.border = f'{self.wall_color}{self.wall_ASCII}'
         self.wall = f'{self.wall_color}{self.wall_ASCII}'
 
+    @staticmethod
+    def _get_42_pattern(width: int, height: int) -> Set[Tuple[int, int]]:
+        center_x = width // 2
+        center_y = height // 2
+
+        pattern = {
+            (center_x - 3, center_y), (center_x - 3, center_y - 1),
+            (center_x - 3, center_y - 2), (center_x - 1, center_y),
+            (center_x - 2, center_y), (center_x - 1, center_y + 1),
+            (center_x - 1, center_y + 2), (center_x + 3, center_y + 2),
+            (center_x + 2, center_y + 2), (center_x + 1, center_y + 2),
+            (center_x + 1, center_y), (center_x + 1, center_y + 1),
+            (center_x + 2, center_y), (center_x + 3, center_y),
+            (center_x + 3, center_y - 1), (center_x + 3, center_y - 2),
+            (center_x + 2, center_y - 2), (center_x + 1, center_y - 2)
+        }
+        return pattern
+
+    def _construct_base_maze(self) -> None:
+        for y in range(self.height):
+            for x in range(self.width):
+                self.maze[(x, y)] = self.wall
+
+                if self.entry_x == x and self.entry_y == y:
+                    self.maze[(x, y)] = self.entry
+
+                if self.exit_x == x and self.exit_y == y:
+                    self.maze[(x, y)] = self.exit
+
+                if (x, y) in self.fourtytwo_coord:
+                    self.maze[(x, y)] = self.fourtytwo_block
+
+    def _generate_random_seed(self) -> None:
+        random_seed = ''.join(random.choices(string.ascii_letters +
+                                             string.digits,
+                                             k=random.randint(1, 101)))
+        self.seed = random_seed
+
     def _check_arg(self, value: Any, name: str) -> None:
         rules: Dict[str, Any] = {
                 'width': int,
@@ -268,8 +320,11 @@ class MazeGenerator():
                 'exit': tuple,
                 'output_file': str,
                 'perfect': bool,
-                'seed': (str, int, type(None))
+                'seed': (str, int, type(None)),
+                'display': str,
+                'algorithm': str
             }
+
         if name in rules:
             required_type = rules[name]
             if not isinstance(value, required_type):
@@ -296,49 +351,53 @@ class MazeGenerator():
         if self.exit_coord in self.fourtytwo_coord:
             raise ValueError("Can't place Exit here. Reserved to '42'")
 
-    def _generate_random_seed(self) -> None:
-        random_n = random.randint(0, 50)
-        if random_n == 25:
-            suffix = 'roandrie'
-        elif random_n == 35:
-            suffix = 'rruiz'
+        valid_display_mode = [None, "ascii", "emoji"]
+        if self.display not in valid_display_mode:
+            raise ValueError("Invalid Display Mode.")
+
+        valid_algorithm = [None, "rb"]
+        if self.algorithm not in valid_algorithm:
+            raise ValueError("Invalid Algorithm Mode")
+
+    def _customize_maze_walls_color(self) -> str:
+        print(f"{self.txt_white}Choose walls color:")
+        print(f"1. {Fore.WHITE}White\t {Fore.BLUE}3. Blue\t "
+              f"{Fore.LIGHTYELLOW_EX}5. Yellow")
+        print(f"2. {Fore.MAGENTA}Magenta\t {Fore.CYAN}4. Cyan\t "
+              f"{Fore.LIGHTGREEN_EX}6. Green")
+
+        user_choice = input(f"{self.txt_white}Enter choice: ")
+        try:
+            choice = int(user_choice)
+
+            if choice >= 1 and choice <= 6:
+                print(Cursor.UP(4) + self.CLEAR, end="")
+                self._apply_wall_color(choice)
+                return "ok"
+            else:
+                raise ValueError
+
+        except ValueError:
+            print(f"{Fore.RED}Invalid choice. Choose between 1 and 6.", end="",
+                  flush=True)
+            time.sleep(1)
+            print(Cursor.UP(5) + "\r" + self.CLEAR, end="")
+
+        return "no"
+
+    def _update_graphics(self):
+        if self.display == "emoji":
+            self.wall_ASCII = "🔲"
+            self.wall = "🔲"
+            self.border = "🔲"
+            self.entry = "🛑"
+            self.exit = "🟦"
+            self.fourtytwo_block = "🟧"
+            self.wall_color = ""
+
         else:
-            suffix = ''
-        length = random.randint(1, 101)
-        random_seed = ''.join(random.choices(string.ascii_letters +
-                                             string.digits, k=length))
-        random_seed += suffix
-        self.seed = random_seed
-
-    @staticmethod
-    def _get_42_pattern(width: int, height: int) -> Set[Tuple[int, int]]:
-        center_x = width // 2
-        center_y = height // 2
-
-        pattern = {
-            (center_x - 3, center_y), (center_x - 3, center_y - 1),
-            (center_x - 3, center_y - 2), (center_x - 1, center_y),
-            (center_x - 2, center_y), (center_x - 1, center_y + 1),
-            (center_x - 1, center_y + 2), (center_x + 3, center_y + 2),
-            (center_x + 2, center_y + 2), (center_x + 1, center_y + 2),
-            (center_x + 1, center_y), (center_x + 1, center_y + 1),
-            (center_x + 2, center_y), (center_x + 3, center_y),
-            (center_x + 3, center_y - 1), (center_x + 3, center_y - 2),
-            (center_x + 2, center_y - 2), (center_x + 1, center_y - 2)
-        }
-        return pattern
-
-    def _print_42(self) -> None:
-        for coord in self.fourtytwo_coord:
-            if coord in self.maze:
-                self.maze[coord] = self.fourtytwo_block
-
-    def _construct_base_maze(self) -> None:
-        for y in range(self.height):
-            for x in range(self.width):
-                self.maze[(x, y)] = self.wall
-
-                if self.entry_x == x and self.entry_y == y:
-                    self.maze[(x, y)] = self.entry
-                if self.exit_x == x and self.exit_y == y:
-                    self.maze[(x, y)] = self.exit
+            self.border = f'{self.wall_color}{self.wall_ASCII}'
+            self.wall = f'{self.wall_color}{self.wall_ASCII}'
+            self.entry = f'{Fore.MAGENTA}{self.wall_ASCII}'
+            self.exit = f'{Fore.RED}{self.wall_ASCII}'
+            self.fourtytwo_block = f'{Fore.LIGHTWHITE_EX}{self.wall_ASCII}'

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:42:52 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/24 12:46:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/26 14:14:46 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -53,6 +53,8 @@ class Config(BaseModel):
     output_file: str
     perfect: bool
     seed: str | int | None = Field(default=None)
+    display: str | None = Field(default=None)
+    algorithm: str | None = Field(default=None)
 
     @field_validator('entry', 'exit', mode='before')
     @classmethod
@@ -138,6 +140,14 @@ class Config(BaseModel):
         if self.exit in coords_fourty_two:
             raise ValueError("Can't place Exit here. Reserved to '42'")
 
+        valid_display_mode = [None, "ascii", "emoji"]
+        if self.display not in valid_display_mode:
+            raise ValueError("Invalid Display Mode.")
+
+        valid_algorithm = [None, "rb"]
+        if self.algorithm not in valid_algorithm:
+            raise ValueError("Invalid Algorithm Mode")
+
         return self
 
 
@@ -186,7 +196,7 @@ def check_config_file(config_file: str) -> Config | None:
                               invalid keys.
     """
     valid_config_key = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE",
-                        "PERFECT", "SEED"]
+                        "PERFECT", "SEED", "DISPLAY", "ALGORITHM"]
     line_count = 0
     config = {}
 

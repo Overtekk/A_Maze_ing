@@ -5,10 +5,10 @@ WIDTH=50
 HEIGHT=50
 
 # Entry coordinates (x,y)
-ENTRY=0,0
+ENTRY=47,6
 
 # Exit coordinates (x,y)
-EXIT=15,12
+EXIT=15,48
 
 # Output filename
 OUTPUT_FILE=maze.txt
@@ -18,3 +18,11 @@ PERFECT=False
 
 # The seed to use (Optional)
 # SEED=42
+
+# Display mode (Optional)
+# Valid = "ascii" (default) | "emoji"
+DISPLAY=emoji
+
+# Algorithm to use (Optional)
+# Valid = "rb"(recursive backtracking(default))
+# ALGORITHM=rb
