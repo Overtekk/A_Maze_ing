@@ -6,13 +6,14 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/26 12:06:35 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/26 14:02:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import random
 import string
 import time
+import sys
 
 from typing import Any, Dict, Optional, Set, Tuple
 from colorama import Fore, Style, Cursor
@@ -134,36 +135,48 @@ class MazeGenerator():
         }
 
     def _generate_maze(self, rendering: bool) -> None:
+        sys.setrecursionlimit(100000)
+
         visited_cells = [(self.exit_x, self.exit_y)]
         def visit(x: int, y: int):
             walls_list = {}
-            if 0 <= x - 1 < self.width:
-                if self.maze[(x - 1, y)] is self.wall:
-                    walls_list.update({"west": x - 1})
+            walls_random = []
+            if 0 <= x - 2 < self.width:
+                if self.maze[(x - 2, y)] is self.wall:
+                    walls_list.update({"west": x - 2})
 
-            if x + 1 < self.width:
-                if self.maze[(x + 1, y)] is self.wall:
-                    walls_list.update({"east": x + 1})
+            if x + 2 < self.width:
+                if self.maze[(x + 2, y)] is self.wall:
+                    walls_list.update({"east": x + 2})
 
-            if 0 <= y - 1 < self.height:
-                if self.maze[(x, y - 1)] is self.wall:
-                    walls_list.update({"south" : y - 1})
+            if 0 <= y - 2 < self.height:
+                if self.maze[(x, y - 2)] is self.wall:
+                    walls_list.update({"south" : y - 2})
 
-            if y + 1 < self.width:
-                if self.maze[(x, y + 1)] is self.wall:
-                    walls_list.update({"north": y + 1})
+            if y + 2 < self.height:
+                if self.maze[(x, y + 2)] is self.wall:
+                    walls_list.update({"north": y + 2})
 
             if len(walls_list) > 0:
-                direction = random.choice(list(walls_list))
+                walls_random = list(walls_list)
+                random.shuffle(walls_random)
 
-                if direction == "north" or direction == "south":
-                    self._break_wall(x, walls_list[direction], rendering)
-                    visited_cells.append([x, walls_list[direction]])
-                    visit(x, walls_list[direction])
-                else:
-                    self._break_wall(walls_list[direction], y, rendering)
-                    visited_cells.append([walls_list[direction], y])
-                    visit(walls_list[direction], y)
+                for item in walls_random:
+                    if item == "north" or item == "south":
+                        if self.maze[x, (walls_list[item])] is self.wall:
+                            self._break_wall(x, walls_list[item], rendering)
+                            mid_y = (y + walls_list[item]) // 2
+                            self._break_wall(x, mid_y, rendering)
+                            visited_cells.append([x, walls_list[item]])
+                            visit(x, walls_list[item])
+                    else:
+                        if self.maze[walls_list[item], y] is self.wall:
+                            self._break_wall(walls_list[item], y, rendering)
+                            mid_x = (x + walls_list[item]) // 2
+                            self._break_wall(mid_x, y, rendering)
+                            visited_cells.append([walls_list[item], y])
+                            visit(walls_list[item], y)
+
         visit(self.exit_x, self.exit_y)
 
     def _break_wall(self, x: int, y: int, rendering: bool) -> None:
@@ -173,7 +186,7 @@ class MazeGenerator():
             curs_x = (x * 2) + 3
             curs_y = y + 2 + 2
             print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
-            time.sleep(0.05)
+            time.sleep(0.001)
 
     def _generate_perfect_maze(self) -> None:
         pass
