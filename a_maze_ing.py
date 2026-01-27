@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/26 14:29:45 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/27 16:24:21 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -19,7 +19,7 @@ Then, construct the maze, output it and launch the 'game'.
 
 import sys
 
-from src.utils.modules_check import module_checker
+from src.utils import module_checker, ArgumentsError
 
 
 def main() -> int:
@@ -36,18 +36,25 @@ def main() -> int:
             print(f"{type(e).__name__}: {e}", file=sys.stderr)
             return 2
 
-        from src.utils.config import check_arg, IllegalArgumentError
-        from src.maze.maze_generator import MazeGenerator
+        from src.maze import MazeConfig, MazeConfigError, MazeGenerator
 
-        config = check_arg()
-        if config is None:
-            return 2
-        config_dict = config.model_dump()
+        if len(sys.argv) == 2:
+            config = MazeConfig.from_config_file("config.txt")
 
-        generator = MazeGenerator(**config_dict)
+            # config = MazeConfig(width=50, height=50, entry=(0,0),
+            #                     exit=(18,12), output_file="maze.txt",
+            #                     perfect=False)
+        else:
+            raise ArgumentsError("ERROR: Use 'make run' or check if "
+                                 "'config.txt' file exist.")
+
+        generator = MazeGenerator(config)
+
         generator.maze_generator(rendering=True)
 
-    except (IllegalArgumentError, FileNotFoundError, ValueError) as e:
+        # print(generator.get_maze_parameters())
+
+    except (MazeConfigError, FileNotFoundError, ValueError) as e:
 
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2

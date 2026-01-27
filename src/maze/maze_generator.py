@@ -6,17 +6,20 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/26 15:51:55 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/27 16:27:47 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import random
 import string
 import time
-import sys
 
-from typing import Any, Dict, Optional, Set, Tuple
+from typing import Any, Dict, Tuple
 from colorama import Fore, Style, Cursor
+
+from .maze_config import MazeConfig
+from .maze_fortytwo_pattern import get_fortytwo_pattern as ft_patt
+from .algorithms import recursive_backtracking
 
 
 class MazeGenerator():
@@ -36,44 +39,30 @@ class MazeGenerator():
     wall_cyan = Fore.CYAN
     wall_green = Fore.LIGHTGREEN_EX
 
-    def __init__(self, width: int, height: int, entry: Tuple[int, int],
-                 exit: Tuple[int, int], output_file: str, perfect: bool,
-                 seed: Optional[str | int] = None,
-                 display: Optional[str] = None,
-                 algorithm: Optional[str] = None) -> None:
-        # Check arguments first
-        self._check_arg(width, 'width')
-        self._check_arg(height, 'height')
-        self._check_arg(entry, 'entry')
-        self._check_arg(exit, 'exit')
-        self._check_arg(output_file, 'output_file')
-        self._check_arg(perfect, 'perfect')
+    def __init__(self, config: MazeConfig) -> None:
+        self.cfg = config
 
         # Maze parameters
-        self.width = width
-        self.height = height
-        self.entry_coord = entry
-        self.exit_coord = exit
-        self.output_file = output_file
-        self.perfect = perfect
-        self.seed = seed
-        self.display = display
-        self.algorithm = algorithm
+        self.width = config.width
+        self.height = config.height
+        self.entry_coord = config.entry
+        self.exit_coord = config.exit
+        self.output_file = config.output_file
+        self.perfect = config.perfect
+        self.seed = config.seed
+        self.display = config.display
+        self.algorithm = config.algorithm
         # Generate seed if user didn't give it.
+
         if self.seed is None:
             self._generate_random_seed()
-
-        if self.display is None:
-            self.display = "ascii"
-        if self.algorithm is None:
-            self.algorithm = "rb"
 
         # Unpacking coords.
         entry_x, entry_y = self.entry_coord
         exit_x, exit_y = self.exit_coord
         self.entry_x, self.entry_y = entry_x, entry_y
         self.exit_x, self.exit_y = exit_x, exit_y
-        self.fourtytwo_coord = self._get_42_pattern(self.width, self.height)
+        self.fourtytwo_coord = ft_patt(self.width, self.height)
 
         self.maze: Dict[Tuple[int, int], str] = {}
         # Default color
@@ -88,9 +77,6 @@ class MazeGenerator():
         self.entry = f'{Fore.MAGENTA}{self.wall_ASCII}'
         self.exit = f'{Fore.RED}{self.wall_ASCII}'
         self.fourtytwo_block = f'{Fore.LIGHTWHITE_EX}{self.wall_ASCII}'
-
-        # Check is parameters are valid
-        self._validate_parameters()
 
     def maze_generator(self, rendering: bool = False) -> None:
         if rendering:
@@ -140,10 +126,7 @@ class MazeGenerator():
             self._print_maze()
 
         if self.algorithm == "rb":
-            if self.perfect:
-                self._generate_perfect_maze_rb()
-            else:
-                self._generate_maze_rb(rendering)
+                recursive_backtracking(self, rendering)
 
         if rendering:
             print(Cursor.POS(1, self.height + 3 + self.y_offset))
@@ -161,61 +144,7 @@ class MazeGenerator():
             'Algorithm': self.algorithm
         }
 
-    def _generate_maze_rb(self, rendering: bool) -> None:
-        sys.setrecursionlimit(100000)
-
-        def visit(x: int, y: int):
-            walls_list = {}
-            walls_random = []
-            if 0 <= x - 2 < self.width:
-                if (self.maze[(x - 2, y)] == self.wall and
-                    self.maze[(x - 1, y)] == self.wall and
-                    (x - 2, y) not in self.fourtytwo_coord and
-                    (x - 1, y) not in self.fourtytwo_coord):
-                    walls_list.update({"west": x - 2})
-
-            if x + 2 < self.width:
-                if (self.maze[(x + 2, y)] == self.wall and
-                    self.maze[(x + 1, y)] == self.wall and
-                    (x + 2, y) not in self.fourtytwo_coord and
-                    (x + 1, y) not in self.fourtytwo_coord):
-                    walls_list.update({"east": x + 2})
-
-            if 0 <= y - 2 < self.height:
-                if (self.maze[(x, y - 2)] == self.wall and
-                    self.maze[(x, y - 1)] == self.wall and
-                    (x, y - 2) not in self.fourtytwo_coord and
-                    (x, y - 1) not in self.fourtytwo_coord):
-                    walls_list.update({"south" : y - 2})
-
-            if y + 2 < self.height:
-                if (self.maze[(x, y + 2)] == self.wall and
-                    self.maze[(x, y + 1)] == self.wall and
-                    (x, y + 2) not in self.fourtytwo_coord and
-                    (x, y + 1) not in self.fourtytwo_coord):
-                    walls_list.update({"north": y + 2})
-
-            if len(walls_list) > 0:
-                walls_random = list(walls_list)
-                random.shuffle(walls_random)
-
-                for item in walls_random:
-                    if item == "north" or item == "south":
-                        if self.maze[x, (walls_list[item])] == self.wall:
-                            self._break_wall(x, walls_list[item], rendering)
-                            mid_y = (y + walls_list[item]) // 2
-                            self._break_wall(x, mid_y, rendering)
-                            visit(x, walls_list[item])
-                    else:
-                        if self.maze[walls_list[item], y] == self.wall:
-                            self._break_wall(walls_list[item], y, rendering)
-                            mid_x = (x + walls_list[item]) // 2
-                            self._break_wall(mid_x, y, rendering)
-                            visit(walls_list[item], y)
-
-        visit(self.exit_x, self.exit_y)
-
-    def _break_wall(self, x: int, y: int, rendering: bool) -> None:
+    def break_wall(self, x: int, y: int, rendering: bool) -> None:
         if (x, y) not in self.fourtytwo_coord:
             self.maze[(x, y)] = self.empty
 
@@ -224,9 +153,6 @@ class MazeGenerator():
                 curs_y = y + 2 + self.y_offset
                 print(Cursor.POS(curs_x, curs_y) + self.empty, end="", flush=True)
                 time.sleep(0.001)
-
-    def _generate_perfect_maze_rb(self) -> None:
-        pass
 
     def _print_maze(self) -> None:
         total_cases = self.width * self.height
@@ -274,24 +200,6 @@ class MazeGenerator():
         # self.border = f'{self.wall_color}{self.wall_ASCII}'
         self.wall = f'{self.wall_color}{self.wall_ASCII}'
 
-    @staticmethod
-    def _get_42_pattern(width: int, height: int) -> Set[Tuple[int, int]]:
-        center_x = width // 2
-        center_y = height // 2
-
-        pattern = {
-            (center_x - 3, center_y), (center_x - 3, center_y - 1),
-            (center_x - 3, center_y - 2), (center_x - 1, center_y),
-            (center_x - 2, center_y), (center_x - 1, center_y + 1),
-            (center_x - 1, center_y + 2), (center_x + 3, center_y + 2),
-            (center_x + 2, center_y + 2), (center_x + 1, center_y + 2),
-            (center_x + 1, center_y), (center_x + 1, center_y + 1),
-            (center_x + 2, center_y), (center_x + 3, center_y),
-            (center_x + 3, center_y - 1), (center_x + 3, center_y - 2),
-            (center_x + 2, center_y - 2), (center_x + 1, center_y - 2)
-        }
-        return pattern
-
     def _construct_base_maze(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
@@ -311,53 +219,6 @@ class MazeGenerator():
                                              string.digits,
                                              k=random.randint(1, 101)))
         self.seed = random_seed
-
-    def _check_arg(self, value: Any, name: str) -> None:
-        rules: Dict[str, Any] = {
-                'width': int,
-                'height': int,
-                'entry': tuple,
-                'exit': tuple,
-                'output_file': str,
-                'perfect': bool,
-                'seed': (str, int, type(None)),
-                'display': str,
-                'algorithm': str
-            }
-
-        if name in rules:
-            required_type = rules[name]
-            if not isinstance(value, required_type):
-                raise ValueError(f"'{name}' has wrong type. Expected "
-                                 f"{required_type}")
-
-    def _validate_parameters(self) -> None:
-        if not (0 <= self.entry_x < self.width and 0 <= self.entry_y <
-                self.height):
-            raise ValueError("Entry cannot be outside walls.")
-        if not (0 <= self.exit_x < self.width and 0 <= self.exit_y <
-                self.height):
-            raise ValueError("Exit cannot be outside walls.")
-
-        if self.entry_coord == self.exit_coord:
-            raise ValueError("Entry and Exit cannot be at the exact same "
-                             "position.")
-
-        if self.width < 7 or self.height < 5:
-            raise ValueError("Dimensions too small for the '42' pattern.")
-
-        if self.entry_coord in self.fourtytwo_coord:
-            raise ValueError("Can't place Entry here. Reserved to '42'")
-        if self.exit_coord in self.fourtytwo_coord:
-            raise ValueError("Can't place Exit here. Reserved to '42'")
-
-        valid_display_mode = [None, "ascii", "emoji"]
-        if self.display not in valid_display_mode:
-            raise ValueError("Invalid Display Mode.")
-
-        valid_algorithm = [None, "rb"]
-        if self.algorithm not in valid_algorithm:
-            raise ValueError("Invalid Algorithm Mode")
 
     def _customize_maze_walls_color(self) -> str:
         print(f"{self.txt_white}Choose walls color:")
