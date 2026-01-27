@@ -20,8 +20,8 @@ PERFECT=False
 # SEED=42
 
 # Display mode (Optional)
-# Valid = "ascii" (default) | "emoji"
-DISPLAY=emoji
+# Valid = "ascii" (default), "betterascii" | "emoji"
+DISPLAY=ascii
 
 # Algorithm to use (Optional)
 # Valid = "rb"(recursive backtracking(default))
