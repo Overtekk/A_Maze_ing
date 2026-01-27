@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/27 18:35:38 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/27 22:45:31 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -159,7 +159,19 @@ class MazeGenerator():
     def _print_maze(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
-                print(self.maze[(x, y)], end="")
+                cell = self.maze[(x, y)]
+                current_color = COLORS.reset
+
+                if cell == MAZE.wall:
+                    current_color = self.color_wall
+                elif cell == MAZE.entry:
+                    current_color = self.color_entry
+                elif cell == MAZE.exit:
+                    current_color = self.color_exit
+                elif cell == MAZE.fortytwo:
+                    current_color = self.color_ft
+
+                print(f"{current_color}{cell}{COLORS.reset}", end="")
             print()
 
     def _customize_maze_walls_color(self) -> str:
@@ -203,4 +215,3 @@ class MazeGenerator():
             6: COLORS.green
         }
         self.color_wall = color.get(choice)
-        MAZE.wall = f"{self.color_wall}\u2588"
