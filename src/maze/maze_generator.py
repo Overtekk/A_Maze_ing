@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/31 12:52:48 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/31 16:25:16 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -56,7 +56,7 @@ class MazeGenerator():
 
         self.maze: Dict[Tuple[int, int], str] = {}
 
-        self.color_wall = COLORS.white
+        self.color_wall = COLORS.lightwhite
         self.color_ft = COLORS.yellow
         self.color_entry = COLORS.magenta
         self.color_exit = COLORS.red
@@ -129,7 +129,6 @@ class MazeGenerator():
         # Put the cursor at the bottom of the screen
         if rendering:
             print(Cursor.POS(1, self.height + self.y_offset))
-        print(f"{self.txt_white}Seed: {self.seed}")
 
     def get_maze_parameters(self) -> Dict[str, Any]:
         return {
@@ -163,6 +162,41 @@ class MazeGenerator():
 
                 print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}{COLORS.reset}", end="", flush=True)
                 time.sleep(0.001)
+
+    def regenerate_maze(self, rendering: bool = False) -> None:
+        if rendering:
+            print(ANIM.clear_screen, end="")
+
+        self.y_offset = 3
+        text_generated = "-Maze Generated-"
+        text_algo_display = f"Mode: {self.algorithm}"
+        if rendering:
+            text_algo_display += f" | Display: {self.display}"
+
+        if rendering:
+            if self.display == DISPLAY_MODE.ascii:
+                visual_width = self.width
+            else:
+                visual_width = self.width // 2
+
+            filling = " " * max(0, ((visual_width - (len(text_generated) // 2))))
+            print(f"{filling}{text_generated}")
+
+            filling = " " * max(0, ((visual_width - (len(text_algo_display) // 2))))
+            print(f"{filling}{text_algo_display}{STYLE.reset}")
+
+        self._generate_random_seed()
+        random.seed(self.seed)
+        self._fill_maze()
+
+        if rendering:
+            self._print_maze()
+
+        if self.algorithm == ALGO_MODE.rb:
+            recursive_backtracking(self, rendering)
+
+        if rendering:
+            print(Cursor.POS(1, self.height + self.y_offset))
 
     def _fill_maze(self) -> None:
         for y in range(self.height):
@@ -230,13 +264,29 @@ class MazeGenerator():
                                              k=random.randint(1, 101)))
         self.seed = random_seed
 
-    def _apply_wall_color(self, choice: int) -> None:
+    def _apply_wall_color(self, choice: int, rotate: bool = False) -> None:
         color = {
-            1: COLORS.white,
+            1: COLORS.lightwhite,
             2: COLORS.magenta,
             3: COLORS.blue,
             4: COLORS.cyan,
-            5: COLORS.yellow,
-            6: COLORS.green
+            5: COLORS.lightyellow,
+            6: COLORS.lightgreen,
+            7: COLORS.lightmagenta,
+            8: COLORS.green,
+            9: COLORS.lightblue
         }
         self.color_wall = color.get(choice)
+
+        if choice == 2:
+            self.color_entry = color.get(7)
+        else:
+            self.color_entry = color.get(2)
+
+        if rotate:
+            r = random.randint(0, 20)
+            if r % 2 == 0:
+                rcolor = random.randint(1, 9)
+                if rcolor == choice:
+                    rcolor += 1
+                self.color_ft = color.get(rcolor)
