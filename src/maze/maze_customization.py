@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:35:27 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/27 18:31:04 by roandrie        ###   ########.fr        #
+#  Updated: 2026/01/31 12:45:33 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,15 +15,21 @@ from enum import Enum
 from colorama import Fore, Style
 
 
-class MAZE(str, Enum):
+class VISUAL(str, Enum):
+    block = "\u2588\u2588"
+    empty_block = "  "
     empty = " "
-    entry = "\u2588"
-    exit = "\u2588"
-    wall = "\u2588"
-    fortytwo = "\u2588"
 
     def __str__(self):
         return self.value
+
+
+class MAZE(Enum):
+    empty = 0
+    entry = 3
+    exit = 2
+    wall = 1
+    fortytwo = "4"
 
 
 class COLORS(Enum):
