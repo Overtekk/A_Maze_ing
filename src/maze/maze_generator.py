@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 08:41:40 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 15:08:03 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -18,6 +18,7 @@ from typing import Any, Dict, Tuple
 from colorama import Cursor
 
 from .maze_config import MazeConfig
+from .maze_errors import MazeGenerationError
 from .maze_fortytwo_pattern import get_fortytwo_pattern as ft_patt
 from .maze_customization import (COLORS, STYLE, ANIM, DISPLAY_MODE, ALGO_MODE,
                                  MAZE, VISUAL)
@@ -69,6 +70,7 @@ class MazeGenerator():
         self.color_ft = COLORS.yellow
         self.color_entry = COLORS.magenta
         self.color_exit = COLORS.red
+        self.color_path = COLORS.cyan
 
         if self.display == DISPLAY_MODE.ascii:
             self.visual_empty = VISUAL.empty_block
@@ -79,17 +81,17 @@ class MazeGenerator():
             self.visual_wall = "#"
             self.step_x = 1
 
-    def maze_generator(self, rendering: bool = False) -> None:
-        if rendering:
-            if self.display == DISPLAY_MODE.ascii:
+    def maze_generator(self, rendering: bool = False,
+                       regen: bool = False) -> None:
+        if rendering and self.display == DISPLAY_MODE.ascii and regen is False:
                 print(ANIM.clear, end="")
                 while True:
                     user_choice = self._customize_maze_walls_color()
                     if user_choice == "ok":
                         break
-
-        loading = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-        text_generating = " Generating Maze..."
+        if regen is False:
+            loading = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+            text_generating = " Generating Maze..."
         text_generated = "-Maze Generated-"
         text_algo_display = f"Mode: {self.algorithm}"
         if rendering:
@@ -111,11 +113,12 @@ class MazeGenerator():
             filling = " " * max(0, ((visual_width - (len(text_generating) // 2))))
 
         # Print the loading text
-        for _ in range(2):
-            for char in loading:
-                print(f"\r{filling}{self.txt_white}{char}{text_generating}",
-                      end="", flush=True)
-                time.sleep(0.1)
+        if regen is False:
+            for _ in range(2):
+                for char in loading:
+                    print(f"\r{filling}{self.txt_white}{char}"
+                          f"{text_generating}", end="", flush=True)
+                    time.sleep(0.1)
 
         filling = " " * max(0, ((visual_width - (len(text_generated) // 2))))
         print(f"\r{filling}{text_generated}    ")
@@ -124,14 +127,27 @@ class MazeGenerator():
         print(f"\r{filling}{text_algo_display}{STYLE.reset}")
 
         # Start the random sequence based on the seed given/generated
-        random.seed(self.seed)
+        if regen is False:
+            random.seed(self.seed)
+        else:
+            self._generate_random_seed()
+            random.seed(self.seed)
+
         self._fill_maze()
 
         if rendering:
-            self._print_maze()
+            self.print_maze()
 
         if self.algorithm == ALGO_MODE.rb:
             recursive_backtracking(self, True)
+
+        # Check if the maze can be solved
+        from src.maze.maze_solver import MazeSolver
+        solver = MazeSolver(self)
+        solver.find_path()
+        if solver.path <= 0:
+            raise MazeGenerationError("This maze cannot be resolve. Omg, "
+                                      "this is so rare!")
 
         # Put the cursor at the bottom of the screen
         if rendering:
@@ -170,41 +186,6 @@ class MazeGenerator():
                 print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}{COLORS.reset}", end="", flush=True)
                 time.sleep(0.001)
 
-    def regenerate_maze(self, rendering: bool = False) -> None:
-        if rendering:
-            print(ANIM.clear_screen, end="")
-
-        self.y_offset = 3
-        text_generated = "-Maze Generated-"
-        text_algo_display = f"Mode: {self.algorithm}"
-        if rendering:
-            text_algo_display += f" | Display: {self.display}"
-
-        if rendering:
-            if self.display == DISPLAY_MODE.ascii:
-                visual_width = self.width
-            else:
-                visual_width = self.width // 2
-
-            filling = " " * max(0, ((visual_width - (len(text_generated) // 2))))
-            print(f"{filling}{text_generated}")
-
-            filling = " " * max(0, ((visual_width - (len(text_algo_display) // 2))))
-            print(f"{filling}{text_algo_display}{STYLE.reset}")
-
-        self._generate_random_seed()
-        random.seed(self.seed)
-        self._fill_maze()
-
-        if rendering:
-            self._print_maze()
-
-        if self.algorithm == ALGO_MODE.rb:
-            recursive_backtracking(self, rendering)
-
-        if rendering:
-            print(Cursor.POS(1, self.height + self.y_offset))
-
     def _fill_maze(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
@@ -217,7 +198,7 @@ class MazeGenerator():
                 else:
                     self.maze[(x, y)] = MAZE.wall
 
-    def _print_maze(self) -> None:
+    def print_maze(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
                 cell = self.maze[(x, y)]

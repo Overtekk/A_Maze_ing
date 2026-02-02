@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 08:21:38 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 15:08:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -40,7 +40,8 @@ def main() -> int:
 
         from colorama import Cursor
 
-        from src.maze import MazeConfig, MazeConfigError, MazeGenerator
+        from src.maze import (MazeConfig, MazeConfigError, MazeGenerator,
+                              MazeSolver)
         from src.maze.maze_customization import ANIM, COLORS
 
         if len(sys.argv) == 2:
@@ -59,10 +60,15 @@ def main() -> int:
 
         # print(generator.get_maze_parameters())
 
+        choice2 = True
+
         while True:
             print("\n=== A-Maze-ing ===")
             print("1. Re-generate a new maze")
-            print("2. Show/Hide path from entry to exit")
+            if choice2:
+                print("2. Show path from entry to exit")
+            else:
+                print("2. Hide path from entry to exit")
             print("3. Rotate maze colors")
             print("4. Show seed")
             print("5. Quit")
@@ -82,15 +88,27 @@ def main() -> int:
                     print(Cursor.UP(1) + "\r" + ANIM.clear, end="")
 
             if choice == 1:
-                generator.regenerate_maze(rendering=True)
+                generator.maze_generator(rendering=True, regen=True)
 
             elif choice == 2:
-                pass
+                print(ANIM.clear_screen, end="")
+                if choice2:
+                    solver = MazeSolver(generator)
+                    solver.find_path()
+                    generator.y_offset = 0
+                    generator.print_maze()
+                    solver.print_path()
+                    choice2 = False
+                else:
+                    generator.y_offset = 0
+                    generator.print_maze()
+                    choice2 = True
+                print(Cursor.POS(1, generator.height + 1))
 
             elif choice == 3:
                 generator._apply_wall_color(random.randint(1, 6), True)
                 print(ANIM.clear_screen)
-                generator._print_maze()
+                generator.print_maze()
 
             elif choice == 4:
                 while True:

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:35:27 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/31 12:45:33 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 11:02:21 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -29,7 +29,7 @@ class MAZE(Enum):
     entry = 3
     exit = 2
     wall = 1
-    fortytwo = "4"
+    fortytwo = 4
 
 
 class COLORS(Enum):
