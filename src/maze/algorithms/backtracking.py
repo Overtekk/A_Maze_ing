@@ -6,20 +6,24 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:16:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/31 13:11:23 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 08:47:31 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import random
 import sys
 
-from typing import Any
+from typing import Any, Tuple
 
 from ..maze_customization import MAZE
 
 
 def recursive_backtracking(generator: Any, rendering: bool) -> None:
-    sys.setrecursionlimit(100000)
+    recursion_limit = generator.width * generator.height
+    sys.setrecursionlimit(recursion_limit)
+
+    start_coords = _choose_random_starting_point(generator)
+    start_coords_x, start_coords_y = start_coords
 
     def visit(x: int, y: int):
         walls_list = {}
@@ -71,4 +75,21 @@ def recursive_backtracking(generator: Any, rendering: bool) -> None:
 
                     visit(target_x, target_y)
 
-    visit(generator.exit_x, generator.exit_y)
+    visit(start_coords_x, start_coords_y)
+
+
+def _choose_random_starting_point(generator: Any) -> Tuple[int, int]:
+    while True:
+        x = random.randrange(1, generator.width, 2)
+        y = random.randrange(1, generator.height, 2)
+
+        coords = (x, y)
+
+        if coords == generator.entry_coord:
+            continue
+        if coords == generator.exit_coord:
+            continue
+        if coords in generator.fourtytwo_coord:
+            continue
+
+        return coords

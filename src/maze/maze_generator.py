@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/31 16:25:16 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 08:41:40 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -29,6 +29,7 @@ class MazeGenerator():
     txt_white = f"{COLORS.white}{STYLE.bright}"
 
     def __init__(self, config: MazeConfig) -> None:
+        # Import config
         self.cfg = config
 
         # Maze parameters
@@ -41,8 +42,8 @@ class MazeGenerator():
         self.seed = config.seed
         self.display = config.display
         self.algorithm = config.algorithm
-        # Generate seed if user didn't give it.
 
+        # Generate seed if user didn't give it.
         if self.seed is None:
             self._generate_random_seed()
 
@@ -52,10 +53,18 @@ class MazeGenerator():
         self.entry_x, self.entry_y = entry_x, entry_y
         self.exit_x, self.exit_y = exit_x, exit_y
 
+        # Resize maze for recursive backtracing algorithm
+        if self.algorithm == ALGO_MODE.rb:
+            if self.width % 2 == 0:
+                self.width += 1
+            if self.height % 2 == 0:
+                self.height += 1
+
         self.fourtytwo_coord = ft_patt(self.width, self.height)
 
         self.maze: Dict[Tuple[int, int], str] = {}
 
+        # Defaults color and visual
         self.color_wall = COLORS.lightwhite
         self.color_ft = COLORS.yellow
         self.color_entry = COLORS.magenta
@@ -122,9 +131,7 @@ class MazeGenerator():
             self._print_maze()
 
         if self.algorithm == ALGO_MODE.rb:
-            pass
-
-        recursive_backtracking(self, True)
+            recursive_backtracking(self, True)
 
         # Put the cursor at the bottom of the screen
         if rendering:

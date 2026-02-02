@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/31 16:23:16 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 08:21:38 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -68,7 +68,7 @@ def main() -> int:
             print("5. Quit")
 
             while True:
-                user_choice = input("Choice? (1-4): ")
+                user_choice = input("Choice? (1-5): ")
                 try:
                     choice = int(user_choice)
                     if 1 <= choice <= 5:
