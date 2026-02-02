@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:35:27 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 11:02:21 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 15:51:13 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -20,7 +20,7 @@ class VISUAL(str, Enum):
     empty_block = "  "
     empty = " "
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
 
@@ -51,8 +51,8 @@ class COLORS(Enum):
     reset = Fore.RESET
     yellow = Fore.YELLOW
 
-    def __str__(self):
-        return self.value
+    def __str__(self) -> str:
+        return str(self.value)
 
 
 class STYLE(Enum):
@@ -60,15 +60,15 @@ class STYLE(Enum):
     dim = Style.DIM
     reset = Style.RESET_ALL
 
-    def __str__(self):
-        return self.value
+    def __str__(self) -> str:
+        return str(self.value)
 
 
 class ANIM(str, Enum):
     clear = "\033[J"
     clear_screen = "\033[2J\033[H"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
 
@@ -77,12 +77,12 @@ class DISPLAY_MODE(str, Enum):
     better_ascii = "betterascii"
     emoji = "emoji"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
 
 class ALGO_MODE(str, Enum):
     rb = "rb"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value

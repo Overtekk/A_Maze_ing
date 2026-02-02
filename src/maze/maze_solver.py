@@ -6,12 +6,13 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 14:27:15 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 16:02:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import time
 
+from typing import Dict, List, Tuple
 from colorama import Cursor
 
 from src.maze.maze_generator import MazeGenerator
@@ -21,16 +22,16 @@ from src.maze.maze_customization import COLORS, MAZE
 class MazeSolver():
     def __init__(self, maze: MazeGenerator) -> None:
         self.maze = maze
-        self.path = []
+        self.path: List[Tuple[int, int]] = []
 
-    def find_path(self):
+    def find_path(self) -> None:
         directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         start = (self.maze.entry_x, self.maze.entry_y)
         end = (self.maze.exit_x, self.maze.exit_y)
 
         visited = []
         queue = []
-        came_from = {}
+        came_from: Dict[Tuple[int, int], Tuple[int, int]] = {}
 
         visited.append(start)
         queue.append(start)
@@ -53,9 +54,9 @@ class MazeSolver():
 
                 if ((0 <= neighbour_x < self.maze.width and
                      0 <= neighbour_y < self.maze.height) and
-                     neighbour not in visited and
-                     self.maze.maze[(neighbour_x, neighbour_y)] in
-                     (MAZE.empty, MAZE.exit)):
+                        neighbour not in visited and
+                        self.maze.maze[(neighbour_x, neighbour_y)] in
+                        (MAZE.empty, MAZE.exit)):
 
                     queue.append(neighbour)
                     came_from[neighbour_x, neighbour_y] = (cell_x, cell_y)

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 15:08:03 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 15:58:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -63,7 +63,7 @@ class MazeGenerator():
 
         self.fourtytwo_coord = ft_patt(self.width, self.height)
 
-        self.maze: Dict[Tuple[int, int], str] = {}
+        self.maze: Dict[Tuple[int, int], Any] = {}
 
         # Defaults color and visual
         self.color_wall = COLORS.lightwhite
@@ -71,6 +71,9 @@ class MazeGenerator():
         self.color_entry = COLORS.magenta
         self.color_exit = COLORS.red
         self.color_path = COLORS.cyan
+
+        self.visual_empty: str | VISUAL
+        self.visual_wall: str | VISUAL
 
         if self.display == DISPLAY_MODE.ascii:
             self.visual_empty = VISUAL.empty_block
@@ -84,14 +87,16 @@ class MazeGenerator():
     def maze_generator(self, rendering: bool = False,
                        regen: bool = False) -> None:
         if rendering and self.display == DISPLAY_MODE.ascii and regen is False:
-                print(ANIM.clear, end="")
-                while True:
-                    user_choice = self._customize_maze_walls_color()
-                    if user_choice == "ok":
-                        break
+            print(ANIM.clear, end="")
+            while True:
+                user_choice = self._customize_maze_walls_color()
+                if user_choice == "ok":
+                    break
+
         if regen is False:
             loading = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
             text_generating = " Generating Maze..."
+
         text_generated = "-Maze Generated-"
         text_algo_display = f"Mode: {self.algorithm}"
         if rendering:
@@ -110,7 +115,9 @@ class MazeGenerator():
                 visual_width = self.width
             else:
                 visual_width = self.width // 2
-            filling = " " * max(0, ((visual_width - (len(text_generating) // 2))))
+            if regen is False:
+                filling = " " * max(0, ((visual_width -
+                                         (len(text_generating) // 2))))
 
         # Print the loading text
         if regen is False:
@@ -123,7 +130,8 @@ class MazeGenerator():
         filling = " " * max(0, ((visual_width - (len(text_generated) // 2))))
         print(f"\r{filling}{text_generated}    ")
 
-        filling = " " * max(0, ((visual_width - (len(text_algo_display) // 2))))
+        filling = " " * max(0, ((visual_width -
+                                 (len(text_algo_display) // 2))))
         print(f"\r{filling}{text_algo_display}{STYLE.reset}")
 
         # Start the random sequence based on the seed given/generated
@@ -145,7 +153,7 @@ class MazeGenerator():
         from src.maze.maze_solver import MazeSolver
         solver = MazeSolver(self)
         solver.find_path()
-        if solver.path <= 0:
+        if len(solver.path) <= 0:
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
 
@@ -167,24 +175,25 @@ class MazeGenerator():
         }
 
     def break_wall(self, x: int, y: int, rendering: bool) -> None:
-            self.maze[(x, y)] = MAZE.empty
+        self.maze[(x, y)] = MAZE.empty
 
-            if rendering:
-                curs_x = (x * self.step_x) + 1
-                curs_y = y + self.y_offset
+        if rendering:
+            curs_x = (x * self.step_x) + 1
+            curs_y = y + self.y_offset
 
-                symbol = self.visual_empty
-                color = COLORS.reset
+            symbol = self.visual_empty
+            color = COLORS.reset
 
-                if x == self.entry_x and y == self.entry_y:
-                    symbol = self.visual_wall
-                    color = self.color_entry
-                elif x == self.exit_x and y == self.exit_y:
-                    symbol = self.visual_wall
-                    color = self.color_exit
+            if x == self.entry_x and y == self.entry_y:
+                symbol = self.visual_wall
+                color = self.color_entry
+            elif x == self.exit_x and y == self.exit_y:
+                symbol = self.visual_wall
+                color = self.color_exit
 
-                print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}{COLORS.reset}", end="", flush=True)
-                time.sleep(0.001)
+            print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}"
+                  f"{COLORS.reset}", end="", flush=True)
+            time.sleep(0.001)
 
     def _fill_maze(self) -> None:
         for y in range(self.height):
@@ -218,7 +227,8 @@ class MazeGenerator():
                     current_color = self.color_wall
                     symbol_to_print = self.visual_wall
 
-                print(f"{current_color}{symbol_to_print}{COLORS.reset}", end="")
+                print(f"{current_color}{symbol_to_print}{COLORS.reset}",
+                      end="")
             print()
 
     def _customize_maze_walls_color(self) -> str:
@@ -240,8 +250,8 @@ class MazeGenerator():
                 raise ValueError
 
         except ValueError:
-            print(f"{COLORS.red}Invalid choice. Choose between 1 and 6.", end="",
-                  flush=True)
+            print(f"{COLORS.red}Invalid choice. Choose between 1 and 6.",
+                  end="", flush=True)
             time.sleep(1)
             print(Cursor.UP(5) + "\r" + ANIM.clear, end="")
         return ""
@@ -264,17 +274,29 @@ class MazeGenerator():
             8: COLORS.green,
             9: COLORS.lightblue
         }
-        self.color_wall = color.get(choice)
+        # Apply user choice color
+        self.color_wall = color.get(choice, COLORS.lightwhite)
 
+        # Prevent the same color from wall-entry
         if choice == 2:
-            self.color_entry = color.get(7)
+            self.color_entry = color.get(7, COLORS.lightmagenta)
         else:
-            self.color_entry = color.get(2)
+            self.color_entry = color.get(2, COLORS.magenta)
 
+        # Prevent the same color from wall-path solution
+        if choice == 4:
+            self.color_path = color.get(6, COLORS.lightgreen)
+        else:
+            self.color_path = color.get(4, COLORS.cyan)
+
+        # Rotate the color of the 42
         if rotate:
             r = random.randint(0, 20)
             if r % 2 == 0:
                 rcolor = random.randint(1, 9)
                 if rcolor == choice:
-                    rcolor += 1
-                self.color_ft = color.get(rcolor)
+                    self.color_ft = COLORS.lightblack
+                else:
+                    self.color_ft = color.get(rcolor, COLORS.lightblack)
+        if self.color_ft == self.color_wall:
+            self.color_ft = COLORS.lightblack

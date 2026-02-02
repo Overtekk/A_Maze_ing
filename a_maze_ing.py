@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 15:08:23 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 15:25:12 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -89,6 +89,7 @@ def main() -> int:
 
             if choice == 1:
                 generator.maze_generator(rendering=True, regen=True)
+                choice2 = True
 
             elif choice == 2:
                 print(ANIM.clear_screen, end="")
@@ -106,9 +107,12 @@ def main() -> int:
                 print(Cursor.POS(1, generator.height + 1))
 
             elif choice == 3:
-                generator._apply_wall_color(random.randint(1, 6), True)
+                generator._apply_wall_color(random.randint(1, 9), True)
                 print(ANIM.clear_screen)
-                generator.print_maze()
+                if choice2:
+                    generator.print_maze()
+                else:
+                    solver.print_maze_solver()
 
             elif choice == 4:
                 while True:
