@@ -7,6 +7,12 @@
 
 ---
 
+<div align="center">
+<img src="https://img.shields.io/badge/No score%20-inactive?logo=42&logoColor=ffff" />
+<img src="https://img.shields.io/badge/bonus-none-inactive"/>
+<img src="https://img.shields.io/badge/date completed-none-inactive"/>
+</div>
+
 ## ⚠️ Disclaimer
 
 - **Full Portfolio:** This repository focuses on this specific project. You can find my entire 42 curriculum 👉 [here](https://github.com/Overtekk/42).
@@ -110,10 +116,30 @@ wip
 wip
 
 
-## 🐨 Status
-
-Not completed yet
-
 ## 💿 Resources
+#### <u>For Maze Algorithm</u>:
+##### General:
+- https://professor-l.github.io/mazes/
+- https://www.youtube.com/watch?v=sVcB8vUFlmU
+- https://en.wikipedia.org/wiki/Maze_generation_algorithm
+
+##### Recursive Backtracking:
 - https://inventwithpython.com/recursion/chapter11.html
+
+##### Hunt and kill:
+- https://weblog.jamisbuck.org/2011/1/24/maze-generation-hunt-and-kill-algorithm
+- https://www.reddit.com/r/proceduralgeneration/comments/1f7w3u7/huntandkill_maze_algorithm/
+
+<br>
+
+#### <u>For Maze Solver</u>:
+- https://medium.com/@msgold/using-python-to-create-and-solve-mazes-672285723c96
+- https://en.wikipedia.org/wiki/Breadth-first_search
+- https://www.geeksforgeeks.org/dsa/breadth-first-search-or-bfs-for-a-graph/
+- https://medium.com/@luthfisauqi17_68455/artificial-intelligence-search-problem-solve-maze-using-breadth-first-search-bfs-algorithm-255139c6e1a3
+- https://stackoverflow.com/questions/57201946/how-do-i-find-shortest-path-in-maze-with-bfs
+
+<br>
+
+#### <u>For Building Package</u>:
 - https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
