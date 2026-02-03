@@ -6,12 +6,12 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/01/27 16:32:19 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/02 15:53:16 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 from pathlib import Path
-from typing import Self, Tuple
+from typing import Any, Self, Tuple
 
 from pydantic import (BaseModel, Field, ValidationError, field_validator,
                       model_validator)
@@ -94,16 +94,16 @@ class MazeConfig(BaseModel):
         entry_x, entry_y = self.entry
         if not (0 <= entry_x < self.width and 0 <= entry_y < self.height):
             raise MazeConfigError(f"Entry coords: {self.entry} is outside maze"
-                             " dimensions.")
+                                  " dimensions.")
 
         exit_x, exit_y = self.exit
         if not (0 <= exit_x < self.width and 0 <= exit_y < self.height):
             raise MazeConfigError(f"Exit coords: {self.exit} is outside maze"
-                             " dimensions.")
+                                  " dimensions.")
 
         if self.entry == self.exit:
             raise MazeConfigError("Entry and Exit cannot be at the exact same "
-                             "position.")
+                                  "position.")
 
         forty_two_coords = ft_patt(self.width, self.height)
         if self.entry in forty_two_coords:
@@ -121,7 +121,7 @@ class MazeConfig(BaseModel):
 
         valid_config_key = {"width", "height", "entry", "exit", "output_file",
                             "perfect", "seed", "display", "algorithm"}
-        raw_config = {}
+        raw_config: dict[str, Any] = {}
 
         try:
             with open(path, 'r') as file:
@@ -139,7 +139,7 @@ class MazeConfig(BaseModel):
 
                     if key not in valid_config_key:
                         raise MazeConfigError(f"Key: '{key}' at line {i}"
-                                                " is not valid")
+                                              " is not valid")
                     else:
                         raw_config[key] = value
         except Exception as e:
