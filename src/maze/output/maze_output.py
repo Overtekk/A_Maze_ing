@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/03 13:05:33 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/03 14:21:56 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,29 +15,23 @@ from typing import Any
 from src.maze.maze_customization import MAZE
 
 
-def maze_output(generator: Any, path: Any):
-    maze_hexa = []
-    for ty in range(1, generator.height - 1, 2):
-        for tx in range(1, generator.width - 1, 2):
-            decimal_val = 0
-            if generator.maze[(tx, ty - 1)] == MAZE.wall:
-                decimal_val = decimal_val + 2**0
-            if generator.maze[(tx + 1, ty)] == MAZE.wall:
-                decimal_val = decimal_val + 2**1
-            if generator.maze[(tx, ty + 1)] == MAZE.wall:
-                decimal_val = decimal_val + 2**2
-            if generator.maze[(tx - 1, ty)] == MAZE.wall:
-                decimal_val = decimal_val + 2**3
-            maze_hexa.append(decimal_val)
-        maze_hexa.append("\n")
+def maze_output(generator: Any, path: Any) -> None:
     hexa = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C",
             "D", "E", "F"]
     with open(generator.output_file, 'w') as f:
-        for val in maze_hexa:
-            if val == "\n":
-                f.write('\n')
-            else:
-                f.write(hexa[val])
+        for ty in range(1, generator.height - 1, 2):
+            for tx in range(1, generator.width - 1, 2):
+                decimal_val = 0
+                if generator.maze[(tx, ty - 1)] == MAZE.wall:
+                    decimal_val = decimal_val + 2**0
+                if generator.maze[(tx + 1, ty)] == MAZE.wall:
+                    decimal_val = decimal_val + 2**1
+                if generator.maze[(tx, ty + 1)] == MAZE.wall:
+                    decimal_val = decimal_val + 2**2
+                if generator.maze[(tx - 1, ty)] == MAZE.wall:
+                    decimal_val = decimal_val + 2**3
+                f.write(hexa[decimal_val])
+            f.write("\n")
         f.write('\n')
         entry_x, entry_y = generator.entry_coord
         f.write(f"{entry_x},{entry_y}\n")
