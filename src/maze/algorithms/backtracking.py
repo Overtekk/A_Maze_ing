@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:16:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 15:51:37 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 12:59:45 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -30,22 +30,26 @@ def recursive_backtracking(generator: Any, rendering: bool) -> None:
         walls_random = []
 
         if 0 <= x - 2 < generator.width:
-            if (generator.maze[(x - 2, y)] == MAZE.wall and
+            if (generator.maze[(x - 2, y)] in
+                    (MAZE.wall, MAZE.entry, MAZE.exit) and
                     generator.maze[(x - 1, y)] == MAZE.wall):
                 walls_list.update({"west": x - 2})
 
         if x + 2 < generator.width:
-            if (generator.maze[(x + 2, y)] == MAZE.wall and
+            if (generator.maze[(x + 2, y)] in
+                    (MAZE.wall, MAZE.entry, MAZE.exit) and
                     generator.maze[(x + 1, y)] == MAZE.wall):
                 walls_list.update({"east": x + 2})
 
         if 0 <= y - 2 < generator.height:
-            if (generator.maze[(x, y - 2)] == MAZE.wall and
+            if (generator.maze[(x, y - 2)] in
+                    (MAZE.wall, MAZE.entry, MAZE.exit) and
                     generator.maze[(x, y - 1)] == MAZE.wall):
                 walls_list.update({"south": y - 2})
 
         if y + 2 < generator.height:
-            if (generator.maze[(x, y + 2)] == MAZE.wall and
+            if (generator.maze[(x, y + 2)] in
+                    (MAZE.wall, MAZE.entry, MAZE.exit) and
                     generator.maze[(x, y + 1)] == MAZE.wall):
                 walls_list.update({"north": y + 2})
 
@@ -74,7 +78,11 @@ def recursive_backtracking(generator: Any, rendering: bool) -> None:
                     target_x = walls_list[item]
                     mid_x = (x + target_x) // 2
 
-                if generator.maze[(target_x, target_y)] == MAZE.wall:
+                if (generator.maze[(target_x, target_y)] in
+                        (MAZE.wall, MAZE.entry, MAZE.exit) and
+                        generator.maze[(mid_x, mid_y)] == MAZE.wall and
+                        (mid_x, mid_y) not in generator.fourtytwo_coord):
+
                     generator.break_wall(target_x, target_y, rendering)
                     generator.break_wall(mid_x, mid_y, rendering)
 
@@ -98,3 +106,14 @@ def _choose_random_starting_point(generator: Any) -> Tuple[int, int]:
             continue
 
         return coords
+
+
+def break_random_walls(generator: Any, rendering: bool) -> None:
+    n_wall_to_break = max(0, (generator.width - generator.height))
+
+    while n_wall_to_break > 0:
+        x = random.randrange(1, generator.width, 1)
+        y = random.randrange(1, generator.height, 1)
+        if generator.maze[(x, y)] == MAZE.wall:
+            generator.break_wall(x, y, rendering)
+            n_wall_to_break -= 1

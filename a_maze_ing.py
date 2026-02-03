@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 15:25:12 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 12:47:35 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -40,8 +40,8 @@ def main() -> int:
 
         from colorama import Cursor
 
-        from src.maze import (MazeConfig, MazeConfigError, MazeGenerator,
-                              MazeSolver)
+        from src.maze import (MazeConfig, MazeConfigError, MazeGenerationError,
+                              MazeGenerator, MazeSolver)
         from src.maze.maze_customization import ANIM, COLORS
 
         if len(sys.argv) == 2:
@@ -129,7 +129,8 @@ def main() -> int:
                 print("\n\nGoodbye and so long!")
                 break
 
-    except (MazeConfigError, FileNotFoundError, ValueError) as e:
+    except (MazeConfigError, MazeGenerationError, FileNotFoundError,
+            ValueError) as e:
 
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 15:58:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 14:19:34 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -22,7 +22,7 @@ from .maze_errors import MazeGenerationError
 from .maze_fortytwo_pattern import get_fortytwo_pattern as ft_patt
 from .maze_customization import (COLORS, STYLE, ANIM, DISPLAY_MODE, ALGO_MODE,
                                  MAZE, VISUAL)
-from .algorithms import recursive_backtracking
+from .algorithms import recursive_backtracking, break_random_walls
 
 
 class MazeGenerator():
@@ -48,18 +48,14 @@ class MazeGenerator():
         if self.seed is None:
             self._generate_random_seed()
 
+        if self.algorithm == ALGO_MODE.rb:
+            self._correcting_coords()
+
         # Unpacking coords.
         entry_x, entry_y = self.entry_coord
         exit_x, exit_y = self.exit_coord
         self.entry_x, self.entry_y = entry_x, entry_y
         self.exit_x, self.exit_y = exit_x, exit_y
-
-        # Resize maze for recursive backtracing algorithm
-        if self.algorithm == ALGO_MODE.rb:
-            if self.width % 2 == 0:
-                self.width += 1
-            if self.height % 2 == 0:
-                self.height += 1
 
         self.fourtytwo_coord = ft_patt(self.width, self.height)
 
@@ -146,19 +142,22 @@ class MazeGenerator():
         if rendering:
             self.print_maze()
 
-        if self.algorithm == ALGO_MODE.rb:
-            recursive_backtracking(self, True)
+        self._choose_algo(rendering)
 
         # Check if the maze can be solved
         from src.maze.maze_solver import MazeSolver
         solver = MazeSolver(self)
         solver.find_path()
         if len(solver.path) <= 0:
+            if rendering:
+                print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
 
         # Put the cursor at the bottom of the screen
         if rendering:
+            print(Cursor.POS(1, self.y_offset), end="")
+            self.print_maze()
             print(Cursor.POS(1, self.height + self.y_offset))
 
     def get_maze_parameters(self) -> Dict[str, Any]:
@@ -195,18 +194,6 @@ class MazeGenerator():
                   f"{COLORS.reset}", end="", flush=True)
             time.sleep(0.001)
 
-    def _fill_maze(self) -> None:
-        for y in range(self.height):
-            for x in range(self.width):
-                if x == self.entry_x and y == self.entry_y:
-                    self.maze[(x, y)] = MAZE.entry
-                elif x == self.exit_x and y == self.exit_y:
-                    self.maze[(x, y)] = MAZE.exit
-                elif (x, y) in self.fourtytwo_coord:
-                    self.maze[(x, y)] = MAZE.fortytwo
-                else:
-                    self.maze[(x, y)] = MAZE.wall
-
     def print_maze(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
@@ -230,6 +217,47 @@ class MazeGenerator():
                 print(f"{current_color}{symbol_to_print}{COLORS.reset}",
                       end="")
             print()
+
+    def _choose_algo(self, rendering: bool) -> None:
+        if self.algorithm == ALGO_MODE.rb and self.perfect:
+            recursive_backtracking(self, rendering)
+        else:
+            recursive_backtracking(self, rendering)
+            break_random_walls(self, rendering)
+
+    def _correcting_coords(self) -> None:
+        if self.entry_coord[0] == 0:
+            self.entry_coord = (self.entry_coord[0] + 1, self.entry_coord[1])
+            self.exit_coord = (self.exit_coord[0] + 1, self.exit_coord[1])
+            self.width += 1
+
+        if self.entry_coord[1] == 0:
+            self.entry_coord = (self.entry_coord[0], self.entry_coord[1] + 1)
+            self.exit_coord = (self.exit_coord[0], self.exit_coord[1] + 1)
+            self.height += 1
+
+        if self.algorithm == ALGO_MODE.rb:
+            if self.width % 2 == 0:
+                self.width += 1
+            if self.height % 2 == 0:
+                self.height += 1
+
+        if self.exit_coord[0] >= self.width - 1:
+            self.exit_coord = (self.width - 2, self.exit_coord[1])
+        if self.exit_coord[1] >= self.height - 1:
+            self.exit_coord = (self.exit_coord[0], self.height - 2)
+
+    def _fill_maze(self) -> None:
+        for y in range(self.height):
+            for x in range(self.width):
+                if x == self.entry_x and y == self.entry_y:
+                    self.maze[(x, y)] = MAZE.entry
+                elif x == self.exit_x and y == self.exit_y:
+                    self.maze[(x, y)] = MAZE.exit
+                elif (x, y) in self.fourtytwo_coord:
+                    self.maze[(x, y)] = MAZE.fortytwo
+                else:
+                    self.maze[(x, y)] = MAZE.wall
 
     def _customize_maze_walls_color(self) -> str:
         print(f"{self.txt_white}Choose walls color:")
