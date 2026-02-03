@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/03 14:21:56 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/03 16:49:50 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -57,3 +57,4 @@ def maze_output(generator: Any, path: Any) -> None:
                 directions.append("W")
 
         f.write("".join(directions))
+        f.write("\n")
