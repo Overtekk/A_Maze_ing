@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 13:58:13 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 14:39:12 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -77,7 +77,7 @@ class MazeConfig(BaseModel):
     @field_validator('algorithm')
     @classmethod
     def validate_algorithm_mode(cls, algo: str | None) -> str:
-        valid_algo = ["rb"]
+        valid_algo = ["rb", "huntandkill"]
 
         if algo is not None:
             value = algo.lower()

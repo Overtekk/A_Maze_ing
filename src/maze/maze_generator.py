@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 14:19:34 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 14:59:01 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -22,7 +22,9 @@ from .maze_errors import MazeGenerationError
 from .maze_fortytwo_pattern import get_fortytwo_pattern as ft_patt
 from .maze_customization import (COLORS, STYLE, ANIM, DISPLAY_MODE, ALGO_MODE,
                                  MAZE, VISUAL)
-from .algorithms import recursive_backtracking, break_random_walls
+from .algorithms import (recursive_backtracking, hunt_and_kill,
+                         break_random_walls)
+from src.maze.output import maze_output
 
 
 class MazeGenerator():
@@ -48,8 +50,8 @@ class MazeGenerator():
         if self.seed is None:
             self._generate_random_seed()
 
-        if self.algorithm == ALGO_MODE.rb:
-            self._correcting_coords()
+        # Correct coordinates for the different algorithms
+        self._correcting_coords()
 
         # Unpacking coords.
         entry_x, entry_y = self.entry_coord
@@ -94,7 +96,10 @@ class MazeGenerator():
             text_generating = " Generating Maze..."
 
         text_generated = "-Maze Generated-"
-        text_algo_display = f"Mode: {self.algorithm}"
+        if self.algorithm == ALGO_MODE.rb:
+            text_algo_display = "Mode: recursive backtracking"
+        elif self.algorithm == ALGO_MODE.hunt_kill:
+            text_algo_display = "Mode: hunt and kill"
         if rendering:
             text_algo_display += f" | Display: {self.display}"
 
@@ -153,6 +158,7 @@ class MazeGenerator():
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
+        maze_output(self, solver.path)
 
         # Put the cursor at the bottom of the screen
         if rendering:
@@ -221,9 +227,14 @@ class MazeGenerator():
     def _choose_algo(self, rendering: bool) -> None:
         if self.algorithm == ALGO_MODE.rb and self.perfect:
             recursive_backtracking(self, rendering)
-        else:
+        elif self.algorithm == ALGO_MODE.rb and self.perfect is False:
             recursive_backtracking(self, rendering)
             break_random_walls(self, rendering)
+
+        elif self.algorithm == ALGO_MODE.hunt_kill and self.perfect:
+            hunt_and_kill(self, rendering)
+        elif self.algorithm == ALGO_MODE.hunt_kill and self.perfect is False:
+            hunt_and_kill(self, rendering)
 
     def _correcting_coords(self) -> None:
         if self.entry_coord[0] == 0:
@@ -236,7 +247,7 @@ class MazeGenerator():
             self.exit_coord = (self.exit_coord[0], self.exit_coord[1] + 1)
             self.height += 1
 
-        if self.algorithm == ALGO_MODE.rb:
+        if self.algorithm in (ALGO_MODE.rb, ALGO_MODE.hunt_kill):
             if self.width % 2 == 0:
                 self.width += 1
             if self.height % 2 == 0:
