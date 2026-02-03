@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 14:19:34 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 14:36:48 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -23,6 +23,7 @@ from .maze_fortytwo_pattern import get_fortytwo_pattern as ft_patt
 from .maze_customization import (COLORS, STYLE, ANIM, DISPLAY_MODE, ALGO_MODE,
                                  MAZE, VISUAL)
 from .algorithms import recursive_backtracking, break_random_walls
+from src.maze.output import maze_output
 
 
 class MazeGenerator():
@@ -153,6 +154,7 @@ class MazeGenerator():
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
+        maze_output(self, solver.path)
 
         # Put the cursor at the bottom of the screen
         if rendering:
