@@ -20,8 +20,8 @@ PERFECT=True
 # SEED=42
 
 # Display mode (Optional)
-# Valid = "ascii" (default), "betterascii" | "emoji"
-DISPLAY=ascii
+# Valid = "ascii" (default), | "betterascii" | "emoji"
+DISPLAY=emoji
 
 # Algorithm to use (Optional)
 # Valid = "rb"(recursive backtracking(DEFAULT)) | "huntandkill"

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 15:59:17 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 17:19:14 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -77,6 +77,10 @@ class MazeGenerator():
             self.visual_empty = VISUAL.empty_block
             self.visual_wall = VISUAL.block
             self.step_x = 2
+        if self.display == DISPLAY_MODE.emoji:
+            self.visual_empty = VISUAL.empty
+            self.visual_wall = VISUAL.emoji
+            self.step_x = 1
         else:
             self.visual_empty = VISUAL.empty
             self.visual_wall = "#"
@@ -111,6 +115,7 @@ class MazeGenerator():
             print(ANIM.clear_screen, end="")
 
         # Calculate based on the width to center the text
+        visual_width = self.width
         if rendering:
             if self.display == DISPLAY_MODE.ascii:
                 visual_width = self.width
@@ -141,6 +146,9 @@ class MazeGenerator():
         else:
             self._generate_random_seed()
             random.seed(self.seed)
+
+        if self.display == DISPLAY_MODE.emoji:
+            self._choose_random_emoji()
 
         self._fill_maze()
 
@@ -347,3 +355,6 @@ class MazeGenerator():
         }
 
         self.algorithm = algo.get(choice, ALGO_MODE.rb)
+
+    def _choose_random_emoji(self) -> None:
+        pass

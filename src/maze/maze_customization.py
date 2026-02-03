@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:35:27 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 14:51:17 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 17:14:46 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -19,6 +19,7 @@ class VISUAL(str, Enum):
     block = "\u2588\u2588"
     empty_block = "  "
     empty = " "
+    emoji = "⬜"
 
     def __str__(self) -> str:
         return self.value
