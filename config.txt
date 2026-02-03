@@ -25,4 +25,4 @@ DISPLAY=ascii
 
 # Algorithm to use (Optional)
 # Valid = "rb"(recursive backtracking(DEFAULT)) | "huntandkill"
-ALGORITHM=huntandkill
+ALGORITHM=rb
