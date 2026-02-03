@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 12:47:35 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 14:54:14 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -60,9 +60,9 @@ def main() -> int:
 
         # print(generator.get_maze_parameters())
 
+        show_menu = True
         choice2 = True
-
-        while True:
+        while True and show_menu:
             print("\n=== A-Maze-ing ===")
             print("1. Re-generate a new maze")
             if choice2:

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:35:27 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 15:51:13 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 14:51:17 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -83,6 +83,7 @@ class DISPLAY_MODE(str, Enum):
 
 class ALGO_MODE(str, Enum):
     rb = "rb"
+    hunt_kill = "huntandkill"
 
     def __str__(self) -> str:
         return self.value
