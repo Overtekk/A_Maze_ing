@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 14:59:01 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/03 15:59:17 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -339,3 +339,11 @@ class MazeGenerator():
                     self.color_ft = color.get(rcolor, COLORS.lightblack)
         if self.color_ft == self.color_wall:
             self.color_ft = COLORS.lightblack
+
+    def _apply_algo_change(self, choice: int) -> None:
+        algo = {
+            1: ALGO_MODE.rb,
+            2: ALGO_MODE.hunt_kill
+        }
+
+        self.algorithm = algo.get(choice, ALGO_MODE.rb)
