@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/31 10:55:56 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/03 10:15:35 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/04 09:59:49 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -18,6 +18,7 @@ from src.maze.maze_customization import MAZE
 
 
 def hunt_and_kill(generator: Any, rendering: bool) -> None:
+    targets = (MAZE.wall, MAZE.entry, MAZE.exit)
     while True:
         x = randrange(1, generator.width, 2)
         y = randrange(1, generator.height, 2)
@@ -37,19 +38,19 @@ def hunt_and_kill(generator: Any, rendering: bool) -> None:
             if x - 2 > 0:
                 directions.append("W")
             neighbors = {}
-            if "N" in directions and generator.maze[(x, y - 2)] == MAZE.wall:
+            if "N" in directions and generator.maze[(x, y - 2)] in targets:
                 if ((x, y - 2) not in generator.fourtytwo_coord
                         and (x, y - 1) not in generator.fourtytwo_coord):
                     neighbors["N"] = (x, y - 2)
-            if "E" in directions and generator.maze[(x + 2, y)] == MAZE.wall:
+            if "E" in directions and generator.maze[(x + 2, y)] in targets:
                 if ((x + 2, y) not in generator.fourtytwo_coord
                         and (x + 1, y) not in generator.fourtytwo_coord):
                     neighbors["E"] = (x + 2, y)
-            if "S" in directions and generator.maze[(x, y + 2)] == MAZE.wall:
+            if "S" in directions and generator.maze[(x, y + 2)] in targets:
                 if ((x, y + 2) not in generator.fourtytwo_coord
                         and (x, y + 1) not in generator.fourtytwo_coord):
                     neighbors["S"] = (x, y + 2)
-            if "W" in directions and generator.maze[(x - 2, y)] == MAZE.wall:
+            if "W" in directions and generator.maze[(x - 2, y)] in targets:
                 if ((x - 2, y) not in generator.fourtytwo_coord
                         and (x - 1, y) not in generator.fourtytwo_coord):
                     neighbors["W"] = (x - 2, y)
@@ -66,22 +67,22 @@ def hunt_and_kill(generator: Any, rendering: bool) -> None:
         found = False
         for ty in range(1, generator.height - 1, 2):
             for tx in range(1, generator.width - 1, 2):
-                if (generator.maze[(tx, ty)] == MAZE.wall
+                if (generator.maze[(tx, ty)] in targets
                         and (tx, ty) not in generator.fourtytwo_coord):
                     potential_neighbors = []
-                    if (generator.maze.get((tx, ty - 2)) != MAZE.wall
+                    if (generator.maze.get((tx, ty - 2)) == MAZE.empty
                             and generator.maze.get((tx, ty - 2)) is not None
                             and (tx, ty - 1) not in generator.fourtytwo_coord):
                         potential_neighbors.append((tx, ty - 1))
-                    if (generator.maze.get((tx + 2, ty)) != MAZE.wall
+                    if (generator.maze.get((tx + 2, ty)) == MAZE.empty
                             and generator.maze.get((tx + 2, ty)) is not None
                             and (tx + 1, ty) not in generator.fourtytwo_coord):
                         potential_neighbors.append((tx + 1, ty))
-                    if (generator.maze.get((tx, ty + 2)) != MAZE.wall
+                    if (generator.maze.get((tx, ty + 2)) == MAZE.empty
                             and generator.maze.get((tx, ty + 2)) is not None
                             and (tx, ty + 1) not in generator.fourtytwo_coord):
                         potential_neighbors.append((tx, ty + 1))
-                    if (generator.maze.get((tx - 2, ty)) != MAZE.wall
+                    if (generator.maze.get((tx - 2, ty)) == MAZE.empty
                             and generator.maze.get((tx - 2, ty)) is not None
                             and (tx - 1, ty) not in generator.fourtytwo_coord):
                         potential_neighbors.append((tx - 1, ty))
