@@ -76,9 +76,16 @@ This project must include a Makefile with strict following rules:
 
 #### 1. First, clone this repository:
 ```bash
-git clone https://github.com/Overtekk/push_swap
+git clone https://github.com/Overtekk/A_Maze_ing
 ```
 #### 2. Run the program:
+##### by using the Makefile
+```bash
+make all
+source .venv/bin/activate
+make run
+```
+##### or (make sur to create a virtual environnement and check if dependencies are installed)
 ```bash
 python3 a_maze_ing.py config.txt
 ```
@@ -93,27 +100,112 @@ You can configure your maze by using those keys:
 |EXIT| Exit coordinates (x,y)|EXIT=19,14
 |OUTPUT_FILE| Output filename|OUTPUT_FILE=maze.txt
 |PERFECT| Is the maze perfect?|PERFECT=True
+|SEED| (Optional) Seed to use|SEED=42|
+|DISPLAY| (Optional) Display for rendering|DISPLAY=ascii|
+|ALGORITHM| (Optional) Algorithm to use|ALGORITHM=rb|
 
-### 🤖 Maze generation algorithm:
-#### Explanation:
-wip
-#### Why we choose this:
-wip
-#### Part of the code reusable, and how to do it:
-wip
+**Display** : `emoji` *(default)* | `ascii`\
+**Algorithm**: `rb` *(default)* | `huntandkill`
 
+#### 🤖 Maze generation algorithm:
+1. **Explanation**:
+
+We choose two algorithms for this project.
+
+The first one is the **Backtracking Algorithm**.
+- First, it choose a random starting point in the maze and carve a path.
+- Then, it choose a random unvisited neighbor and carve a path.
+- It push the current cell to the stack/history.
+- If there are no unvisited neighbors (dead end), pop from the stack to return to the previous cell.
+- Finally, it continue until the algorithm returns to the starting point.
+
+The second one is the **Hunt and Kill Algorithm**.
+- It choose a random starting point in the maze and carve a path.
+- If it reach a dead end, then it looks for the first cell that neighbors part of the maze. It check from the left, to the right starting the first line.
+
+2. **Why we choose this**:
+
+We choose those algorithms for two reasons. The first one is to train on the backtracking part. The second one is just for the visual. It looks good.
+
+3. **Part of the code reusable, and how to do it**:
+
+All the files in the `src/maze/` folder are a part of the package.\
+Import the generator using
+```python
+from src.maze import MazeGenerator
+```
+In your code, you can use the `MazeGenerator()` function to generate a Maze and store it a variable.\
+To import your configs, you can use two methods:\
+- Using the `MazeConfig` import (`from src.maze import MazeConfig`). Then:
+```python
+config = MazeConfig.from_config_file("config.txt")
+```
+Make sur that your config match the format above (or copy-paste the file in the repo).
+- Alternatively, past your config directly in the function call:
+```python
+config = MazeConfig(width=50, height=50, entry=(0,0), exit=(18,12),output_file="maze.txt", perfect=False)
+```
+<br>
+
+Then you can create your `MazeGenerator` object using:
+```python
+generator = MazeGenerator(config)
+```
+To generate the maze, use:
+```python
+generator.maze_generator(rendering=True)
+```
+- rendering: True to print the maze in the terminal.
+
+<br>
+
+Other functions:
+
+You can print the maze parameters by using:
+```python
+print(generator.get_maze_parameters())
+```
+
+You can print the maze using:
+```python
+generator.print_maze()
+```
+
+<br>
+
+The generator use the `MazeSolver` class itself to check if the Maze can be solved. You can import this package `from src.maze import MazeSolver` and use this function to create the `MazeSolver` object.
+```python
+solver = MazeSolver(generator)
+```
+Then, check if a path exist using:
+```python
+solver.find_path()
+```
+and print it using:
+```python
+solver.print_maze_solver()
+```
 
 ### 🧑‍🏫 The Team:
-#### Roles of each team member:
-wip
-#### Anticipated planning, and the evolution:
-wip
-#### What worked well, what improvement could be done:
-wip
+1. Roles of each team member:
+
+- roandrie: [norme corrector, readme writer, files organizer, writing customization and parsing]
+- rruiz: [math pro, debugger, writing algorithms, docstring pro]
+
+2. Anticipated planning, and the evolution:
+
+There was not a planning at the start. I (roandrie) started the project before rruiz because he was still on the python modules. So I started the repo, the parsing, errors managements, creating everything we need. Then, we works and what we needed : creating the maze, filling it, creating the algorithm etc...
+
+3. What worked well, what improvement could be done:
+
+Our team was good. Nothing can be improved apart from our coding skill.
 
 
 ### 📂 Specific tools:
-wip
+
+We use 2 differents libraries:
+- `pydantic` to check if the config is correct.
+- `colorama` to print the maze on the terminal and add colors and style in the text.
 
 
 ## 💿 Resources
@@ -143,3 +235,9 @@ wip
 
 #### <u>For Building Package</u>:
 - https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+
+<br>
+
+#### <u>AI Usage</u>:
+
+AI was use to better understanding certain things in Python. And help us on some maths aspect. Also, help use optimize more part of code (because Python can be easy but also be very unclear at some part).
