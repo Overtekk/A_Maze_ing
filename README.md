@@ -109,7 +109,7 @@ python3 a_maze_ing.py config.txt
 
 ---
 
-#### 📑 Configuration file format
+## 📑 Configuration file format
 You can configure your maze by using those keys:
 
 |Key|Description|Example|
@@ -129,7 +129,7 @@ You can configure your maze by using those keys:
 
 ---
 
-#### 🖥️ Interactive terminal
+## 🖥️ Interactive terminal
 
 When you launch the project, the maze will be draw and a menu will appear at the bottom. Use the keyboard to choose whatever option you want:
 
@@ -144,9 +144,91 @@ When you launch the project, the maze will be draw and a menu will appear at the
 
 ---
 
-#### 📂 Architecture overview:
+## 📂 Architecture overview:
 
-#### 🤖 Maze generation algorithm:
+- **a_maze_ing.py**: The main script of the project.
+- **src/utils/**: utils functions for the A_Maze_Ing project.
+- **src/maze/***: The reutilisable maze generation module.
+
+### ✍ How all of this works?
+
+The first thing to do is to check if the maze configurations is good. So in the **src/maze/maze_config.py**, the `MazeConfig` class check, with `pydantic` if the configuration gave by the user respect the standard *(no entry or exit outside the maze, entry and exit not and the same place, etc...)*.\
+If evertyhing is good, then the `MazeConfig` object can be instancied and all the configurations will be stored inside a variable.
+
+**src/maze/maze_fortytwo_pattern.py** create the 42 pattern at the middle of the maze. The coordinates are stored in a set so it's more easy to check in the future.
+
+The core of the module is the **src/maze/maze_generator.py**. Inside, the class `MazeGenerator` contain the maze in `self.maze`. **The main function** `maze_generator()` print the text, generate a seed if needed, the maze, print it, check if it can be solved and create the output file.\
+
+**src/maze/maze_solver.py** contain the `MazeSolver` class used to print the shortest path (if possible), and print it.
+
+**src/maze/errors.py** contain custom errors relative for this project.
+
+**src/maze/customization** is a list of **Enum Class** used to customize the maze and be more efficient than a simple `self.maze_wall` (and prevent having 800 lines in the maze_generator.py).
+
+To have the file output, to print the maze and the solution inside a file, we've created it inside the **src/maze/output/maze_ouput.py**.
+
+Finally, all the algorithms are in **src/maze/algorithms/**.
+
+---
+## 🔑 Public API
+
+```python
+from maze import MazeConfig, MazeGenerator, MazeSolver
+```
+
+- MazeConfig — base model class checking configuration and creating the config object.
+- MazeGenerator — factory used to instantiate maze and print it.
+- MazeSolver — class to check if a maze is solvable.
+
+---
+
+## 🚨 MazeGenerator
+
+- Create unique maze based on a seed (can be reproduce).
+- Seed is generated automatically if user doesn't provide it.
+- Render the maze based on user choice.
+- Solve the maze to provide a fully functionnal maze.
+- Generated **perfect** and **imperfect** mazes.
+- Generated walls around the maze to keep it simple.
+- Provides multiples display and algorithms.
+
+---
+
+## 🌚 Quick example
+
+```python
+#!/usr/bin/env python3
+
+from maze import MazeConfig, MazeGenerator, MazeSolver
+
+# Generate the config object with custom parameters.
+config = MazeConfig(width=50, height=50, entry=(0,0), exit=(18,12), output_file="maze.txt", perfect=False, display="emoji", algorithm="rb")
+
+# Instanciate a new maze.
+generator = MazeGenerator(config)
+
+# Generate a new maze and display it.
+generator.maze_generator(rendering=True)
+
+# Display the maze parameters.
+generator.get_maze_parameters()
+
+# Create new config from file.
+cool_config = MazeConfig.from_config_file("config.txt")
+
+# Instanciate another maze and do not render it.
+my_super_maze = MazeGenerator(cool_config)
+my_super_maze.maze_generator(rendering=False)
+
+# Solve a maze and print the result
+solver = MazeSolver(my_super_maze)
+solver.find_path()
+solver.print_maze_solver()
+```
+
+---
+
+## 🤖 Maze generation algorithm:
 1. **Explanation**:
 
 We choose two algorithms for this project.
@@ -233,7 +315,7 @@ solver.print_maze_solver()
 
 ---
 
-### 🧑‍🏫 The Team:
+## 🧑‍🏫 The Team:
 1. Roles of each team member:
 
 - roandrie: [norme corrector, readme writer, files organizer, writing customization and parsing]
@@ -249,7 +331,7 @@ Our team was good. Nothing can be improved apart from our coding skill.
 
 ---
 
-### 📂 Specific tools:
+## 📂 Specific tools:
 
 We use 2 differents libraries:
 - `pydantic` to check if the config is correct.
