@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 13:22:30 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/05 14:44:20 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -22,8 +22,8 @@ import time
 from typing import Any, Dict, List, Tuple
 from colorama import Cursor
 
-from src.maze.maze_generator import MazeGenerator
-from src.maze.maze_customization import COLORS, MAZE, DISPLAY_MODE
+from .maze_generator import MazeGenerator
+from .maze_customization import COLORS, MAZE, DISPLAY_MODE
 
 
 class MazeSolver():

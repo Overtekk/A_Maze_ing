@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/05 13:24:19 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/05 14:45:29 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -19,7 +19,7 @@ exit coordinates and the path directions as NSEW characters.
 
 from typing import Any
 
-from src.maze.maze_customization import MAZE
+from maze.maze_customization import MAZE
 
 
 def maze_output(generator: Any, path: Any) -> None:
