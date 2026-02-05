@@ -6,15 +6,16 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 12:50:24 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 13:25:10 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-"""Main script for the Maze Generator.
+"""Command-line entry point for the A-Maze-ing generator.
 
-First, we check if all dependencies are installed. If no error have been found,
-we can import everything and start to check the config file.
-Then, construct the maze, output it and launch the 'game'.
+This script validates runtime dependencies, parses a simple
+`config.txt` format via `MazeConfig.from_config_file`, constructs a
+`MazeGenerator` and provides an interactive terminal UI to regenerate
+mazes, change colors and toggle algorithms.
 """
 
 import sys
@@ -30,11 +31,10 @@ if TYPE_CHECKING:
 
 
 def main() -> int:
-    """"Programm main entry point.
+    """Main program entry point.
 
     Returns:
-        int: 0 if no error occured, 1 or 2 otherwise.
-
+        int: Process return code (0 for success, non-zero on error).
     """
     try:
         try:
@@ -211,6 +211,14 @@ def main() -> int:
 
 
 def display_text(maze: "MazeGenerator") -> None:
+    """Print small summary text above the rendered maze.
+
+    The function chooses a centered title string and a brief line
+    describing the current algorithm and display mode.
+
+    Args:
+        maze: The `MazeGenerator` used to derive display properties.
+    """
 
     from src.maze.maze_customization import (STYLE, ALGO_MODE,
                                              DISPLAY_MODE)
