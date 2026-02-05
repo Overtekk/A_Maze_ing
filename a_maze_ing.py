@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 12:50:24 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 14:56:54 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 from src.utils import module_checker, ArgumentsError
 
 if TYPE_CHECKING:
-    from src.maze import MazeGenerator
+    from maze import MazeGenerator
 
 
 def main() -> int:
@@ -45,10 +45,9 @@ def main() -> int:
 
         from colorama import Cursor
 
-        from src.maze import (MazeConfig, MazeConfigError, MazeGenerationError,
-                              MazeGenerator, MazeSolver)
-        from src.maze.maze_customization import (ANIM, COLORS, STYLE,
-                                                 ALGO_MODE)
+        from maze import (MazeConfig, MazeConfigError, MazeGenerationError,
+                          MazeGenerator, MazeSolver)
+        from maze.maze_customization import (ANIM, COLORS, STYLE, ALGO_MODE)
 
         if len(sys.argv) == 2:
             config = MazeConfig.from_config_file("config.txt")
@@ -212,8 +211,7 @@ def main() -> int:
 
 def display_text(maze: "MazeGenerator") -> None:
 
-    from src.maze.maze_customization import (STYLE, ALGO_MODE,
-                                             DISPLAY_MODE)
+    from maze.maze_customization import (STYLE, ALGO_MODE, DISPLAY_MODE)
 
     text_generated = "-Maze Generated-"
     if maze.algorithm == ALGO_MODE.rb:

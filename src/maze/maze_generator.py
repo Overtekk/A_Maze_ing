@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 12:51:15 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 14:45:05 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -24,7 +24,7 @@ from .maze_customization import (COLORS, STYLE, ANIM, DISPLAY_MODE, ALGO_MODE,
                                  MAZE, VISUAL, EMOJI)
 from .algorithms import (recursive_backtracking, hunt_and_kill,
                          break_random_walls)
-from src.maze.output import maze_output
+from .output import maze_output
 
 
 class MazeGenerator():
@@ -164,7 +164,7 @@ class MazeGenerator():
         self._choose_algo(rendering)
 
         # Check if the maze can be solved
-        from src.maze.maze_solver import MazeSolver
+        from .maze_solver import MazeSolver
         solver = MazeSolver(self)
         solver.find_path()
         if len(solver.path) <= 0:

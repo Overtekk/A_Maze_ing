@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:16:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 12:38:48 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 14:54:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,7 +15,7 @@ import sys
 
 from typing import Any, Tuple
 
-from ..maze_customization import MAZE
+from maze.maze_customization import MAZE
 
 
 def recursive_backtracking(generator: Any, rendering: bool) -> None:
@@ -127,8 +127,8 @@ def break_random_walls(generator: Any, rendering: bool) -> None:
 
                     if (not (0 <= neighbour_x < generator.width and
                              0 <= neighbour_y < generator.height) or
-                             generator.maze.get((neighbour_x, neighbour_y)) ==
-                             MAZE.wall):
+                            generator.maze.get((neighbour_x, neighbour_y)) ==
+                            MAZE.wall):
                         totals_walls += 1
 
                     if (0 < neighbour_x < generator.width and
@@ -147,4 +147,3 @@ def break_random_walls(generator: Any, rendering: bool) -> None:
     for wall_x, wall_y in potential_wall_to_break:
         if random.choice([True, False]):
             generator.break_wall(wall_x, wall_y, rendering)
-

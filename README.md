@@ -21,6 +21,23 @@
 - **Academic Integrity:** I encourage you to try the project yourself first. Use this repo only as a reference, not for copy-pasting. Be patient, you will succeed.
 - **Team Project:** For this project, I' m pairing with **rruiz** (https://github.com/shadox254)
 
+## Quick Start
+```bash
+# Create virtual environnement and install dependencies
+make all
+
+# or just install dependencies
+make install
+
+# Run the script with the default configuration
+make run
+
+# Clean build artifacts
+make clean
+```
+
+---
+
 ## 📂 Description
 
 **📜 Summary:**\
@@ -90,8 +107,11 @@ make run
 python3 a_maze_ing.py config.txt
 ```
 
+---
+
 #### 📑 Configuration file format
 You can configure your maze by using those keys:
+
 |Key|Description|Example|
 |:---|:---:|:---:|
 |WIDTH| Maze width (number of cells)|WIDTH=20
@@ -106,6 +126,25 @@ You can configure your maze by using those keys:
 
 **Display** : `emoji` *(default)* | `ascii`\
 **Algorithm**: `rb` *(default)* | `huntandkill`
+
+---
+
+#### 🖥️ Interactive terminal
+
+When you launch the project, the maze will be draw and a menu will appear at the bottom. Use the keyboard to choose whatever option you want:
+
+|KEY|Name|Description|
+|:-:|:--:|:---------:|
+|1|Re-generate a new maze|Regenerate a new maze, with a new seed|
+|2|Show/Hide path from entry to exit|Show or hide the shortest path from entry to exit|
+|3|Rotate maze colors|Roatate randomly the maze walls color and, if youŕe lucky, the 42 pattern|
+|4|Change algorithm|Show a sub-menu in which you can choose the algorithm you want to use for the next generation|
+|5|Show seed|Show the seed used|
+|6|Quit|Quit the menu and the program|
+
+---
+
+#### 📂 Architecture overview:
 
 #### 🤖 Maze generation algorithm:
 1. **Explanation**:
@@ -129,14 +168,20 @@ We choose those algorithms for two reasons. The first one is to train on the bac
 
 3. **Part of the code reusable, and how to do it**:
 
-All the files in the `src/maze/` folder are a part of the package.\
+All the files in the `src/maze/` folder are a part of the package.
+
+Install the package using `pip`
+```bash
+pip install ~/mazegen-1.0.0-py3-none-any.whl
+```
+
 Import the generator using
 ```python
-from src.maze import MazeGenerator
+from maze.maze_generator import MazeGenerator
 ```
 In your code, you can use the `MazeGenerator()` function to generate a Maze and store it a variable.\
 To import your configs, you can use two methods:\
-- Using the `MazeConfig` import (`from src.maze import MazeConfig`). Then:
+- Using the `MazeConfig` import (`from maze.maze_config import MazeConfig`). Then:
 ```python
 config = MazeConfig.from_config_file("config.txt")
 ```
@@ -173,7 +218,7 @@ generator.print_maze()
 
 <br>
 
-The generator use the `MazeSolver` class itself to check if the Maze can be solved. You can import this package `from src.maze import MazeSolver` and use this function to create the `MazeSolver` object.
+The generator use the `MazeSolver` class itself to check if the Maze can be solved. You can import this package `from maze.maze_solver import MazeSolver` and use this function to create the `MazeSolver` object.
 ```python
 solver = MazeSolver(generator)
 ```
@@ -185,6 +230,8 @@ and print it using:
 ```python
 solver.print_maze_solver()
 ```
+
+---
 
 ### 🧑‍🏫 The Team:
 1. Roles of each team member:
@@ -200,6 +247,7 @@ There was not a planning at the start. I (roandrie) started the project before r
 
 Our team was good. Nothing can be improved apart from our coding skill.
 
+---
 
 ### 📂 Specific tools:
 
@@ -207,6 +255,7 @@ We use 2 differents libraries:
 - `pydantic` to check if the config is correct.
 - `colorama` to print the maze on the terminal and add colors and style in the text.
 
+---
 
 ## 💿 Resources
 #### <u>For Maze Algorithm</u>:
@@ -241,3 +290,5 @@ We use 2 differents libraries:
 #### <u>AI Usage</u>:
 
 AI was use to better understanding certain things in Python. And help us on some maths aspect. Also, help use optimize more part of code (because Python can be easy but also be very unclear at some part).
+
+---

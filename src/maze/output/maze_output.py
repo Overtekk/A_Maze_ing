@@ -6,13 +6,13 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/03 16:49:50 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 14:45:29 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 from typing import Any
 
-from src.maze.maze_customization import MAZE
+from maze.maze_customization import MAZE
 
 
 def maze_output(generator: Any, path: Any) -> None:

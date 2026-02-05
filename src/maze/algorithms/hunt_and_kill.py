@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/31 10:55:56 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/05 09:38:52 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/05 14:10:32 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -14,7 +14,7 @@ from random import choice, randrange
 
 from typing import Any
 
-from src.maze.maze_customization import MAZE
+from maze.maze_customization import MAZE
 
 
 def hunt_and_kill(generator: Any, rendering: bool) -> None:
