@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 13:38:13 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/05 16:11:13 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -140,7 +140,6 @@ class MazeConfig(BaseModel):
             raise MazeConfigError("Can't place Entry here. Reserved to '42'")
         if self.exit in forty_two_coords:
             raise MazeConfigError("Can't place Exit here. Reserved to '42'")
-
 
         return self
 
