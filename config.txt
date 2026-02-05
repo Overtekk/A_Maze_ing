@@ -20,7 +20,7 @@ PERFECT=True
 # SEED=42
 
 # Display mode (Optional)
-# Valid = "ascii" (default), | "betterascii" | "emoji"
+# Valid = "emoji" (default) | "ascii"
 DISPLAY=emoji
 
 # Algorithm to use (Optional)

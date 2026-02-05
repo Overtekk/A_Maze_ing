@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 14:39:12 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 09:58:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -63,12 +63,12 @@ class MazeConfig(BaseModel):
     @field_validator('display')
     @classmethod
     def validate_display_mode(cls, display: str | None) -> str:
-        valid_display = ["ascii", "betterascii", "emoji"]
+        valid_display = ["ascii", "emoji"]
 
         if display is not None:
             value = display.lower()
         else:
-            value = "ascii"
+            value = "emoji"
 
         if value not in valid_display:
             raise MazeConfigError(f"Invalid display mode. Use {valid_display}")

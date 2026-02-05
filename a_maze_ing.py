@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 16:20:20 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 08:52:05 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,7 +21,12 @@ import sys
 import time
 import random
 
+from typing import TYPE_CHECKING
+
 from src.utils import module_checker, ArgumentsError
+
+if TYPE_CHECKING:
+    from src.maze import MazeGenerator
 
 
 def main() -> int:
@@ -42,7 +47,8 @@ def main() -> int:
 
         from src.maze import (MazeConfig, MazeConfigError, MazeGenerationError,
                               MazeGenerator, MazeSolver)
-        from src.maze.maze_customization import ANIM, COLORS, STYLE
+        from src.maze.maze_customization import (ANIM, COLORS, STYLE,
+                                                 ALGO_MODE)
 
         if len(sys.argv) == 2:
             config = MazeConfig.from_config_file("config.txt")
@@ -63,32 +69,41 @@ def main() -> int:
         show_menu = True
         choice2 = True
         while True and show_menu:
+            if generator.algorithm == ALGO_MODE.rb:
+                algo = "recursive backtracking"
+            else:
+                algo = "hunt and kill"
+
             print(f"\n{COLORS.magenta}=== {STYLE.bright}{COLORS.red}A-"
                   f"{COLORS.blue}Maze-{COLORS.green}ing {COLORS.reset}"
-                  f"{COLORS.magenta}==={COLORS.reset}")
+                  f"{COLORS.magenta}==={COLORS.reset}{STYLE.reset}")
+
             print(f"{STYLE.bright}{COLORS.lightcyan}1. Re-generate a new maze"
-                  f"{COLORS.reset}")
+                  f"{COLORS.reset}{STYLE.reset}")
 
             if choice2:
                 print(f"{STYLE.bright}{COLORS.lightcyan}2. Show path from "
-                      f"entry to exit{COLORS.reset}")
+                      f"entry to exit{COLORS.reset}{STYLE.reset}")
             else:
                 print(f"{STYLE.bright}{COLORS.lightcyan}2. Hide path from "
-                      f"entry to exit{COLORS.reset}")
+                      f"entry to exit{COLORS.reset}{STYLE.reset}")
+
             print(f"{STYLE.bright}{COLORS.lightcyan}3. Rotate maze colors"
-                  f"{COLORS.reset}")
-            print(f"{STYLE.bright}{COLORS.lightcyan}4. Change algorithm"
-                  f"{COLORS.reset}")
+                  f"{COLORS.reset}{STYLE.reset}")
+            print(f"{STYLE.bright}{COLORS.lightcyan}4. Change algorithm "
+                  f"(current: {algo}){COLORS.reset}"
+                  f"{STYLE.reset}")
             print(f"{STYLE.bright}{COLORS.lightcyan}5. Show seed"
-                  f"{COLORS.reset}")
-            print(f"{STYLE.bright}{COLORS.lightcyan}6. Quit{COLORS.reset}")
+                  f"{COLORS.reset}{STYLE.reset}")
+            print(f"{STYLE.bright}{COLORS.lightcyan}6. Quit{COLORS.reset}"
+                  f"{STYLE.reset}")
 
             while True:
                 user_choice = input(f"{COLORS.lightgreen}Choice?"
                                     f" (1-6): {COLORS.reset}")
                 try:
                     choice = int(user_choice)
-                    if 1 <= choice <= 6:
+                    if 1 <= choice <= 7:
                         break
                     else:
                         raise ValueError
@@ -104,26 +119,33 @@ def main() -> int:
 
             elif choice == 2:
                 print(ANIM.clear_screen, end="")
+                display_text(generator)
                 if choice2:
                     solver = MazeSolver(generator)
                     solver.find_path()
-                    generator.y_offset = 0
+                    generator.y_offset = 2
                     generator.print_maze()
                     solver.print_path()
                     choice2 = False
                 else:
-                    generator.y_offset = 0
+                    generator.y_offset = 2
                     generator.print_maze()
                     choice2 = True
-                print(Cursor.POS(1, generator.height + 1))
+                print(Cursor.POS(1, generator.height + generator.y_offset + 1))
 
             elif choice == 3:
+                print(ANIM.clear_screen, end="")
+                display_text(generator)
                 generator._apply_wall_color(random.randint(1, 9), True)
-                print(ANIM.clear_screen)
+                generator.y_offset = 2
                 if choice2:
                     generator.print_maze()
                 else:
-                    solver.print_maze_solver()
+                    if 'solver' in locals():
+                        solver.print_maze_solver()
+                    else:
+                        generator.print_maze()
+                print(Cursor.POS(1, generator.height + generator.y_offset + 1))
 
             elif choice == 4:
                 while True:
@@ -131,9 +153,10 @@ def main() -> int:
                     print(f"{STYLE.bright}{COLORS.lightcyan}Choose one "
                           f"algorithm: ")
                     print(f"{STYLE.bright}{COLORS.lightcyan}1. Recursive "
-                          f"Backtracking | 2. Hunt and Kill")
+                          f"Backtracking | 2. Hunt and Kill", end="")
 
                     while True:
+                        print(f"{STYLE.reset}")
                         algo_choose = input(f"{COLORS.lightgreen}Choice? (1-2)"
                                             f": {COLORS.reset}")
                         try:
@@ -149,7 +172,7 @@ def main() -> int:
                                 time.sleep(0.5)
 
                     print(f"{STYLE.bright}{COLORS.green}✅ Algorithm "
-                          "successfuly changed!")
+                          f"successfuly changed!{STYLE.reset}")
                     time.sleep(0.7)
                     print(Cursor.UP(6) + "\r" + ANIM.clear, end="")
                     break
@@ -158,9 +181,9 @@ def main() -> int:
                 while True:
                     print(Cursor.UP(7) + "\r" + ANIM.clear, end="", flush=True)
                     print(f"{STYLE.bright}{COLORS.lightcyan}Seed: "
-                          f"{COLORS.reset}", end="")
+                          f"{COLORS.reset}{STYLE.reset}", end="")
                     print(f"{STYLE.dim}{generator.seed}", end="", flush=True)
-                    print(f"{COLORS.reset}")
+                    print(f"{COLORS.reset}{STYLE.reset}")
 
                     k = input(f"{COLORS.lightgreen}Press anything to show "
                               f"the menu: {COLORS.reset}")
@@ -170,7 +193,7 @@ def main() -> int:
 
             elif choice == 6:
                 print(f"\n\n{STYLE.bright}{COLORS.lightred}Goodbye 👋 and "
-                      f"so long! {COLORS.reset}")
+                      f"so long! {COLORS.reset}{STYLE.reset}")
                 break
 
     except (MazeConfigError, MazeGenerationError, FileNotFoundError,
@@ -185,6 +208,30 @@ def main() -> int:
     #     return 1
 
     return 0
+
+
+def display_text(maze: "MazeGenerator") -> None:
+
+    from src.maze.maze_customization import (STYLE, ALGO_MODE,
+                                             DISPLAY_MODE)
+
+    text_generated = "-Maze Generated-"
+    if maze.algorithm == ALGO_MODE.rb:
+        text_algo_display = "Mode: recursive backtracking"
+    if maze.algorithm == ALGO_MODE.hunt_kill:
+        text_algo_display = "Mode: hunt and kill"
+    text_algo_display += f" | Display: {maze.display}"
+
+    if maze.display in (DISPLAY_MODE.ascii, DISPLAY_MODE.emoji):
+        visual_width = maze.width
+    else:
+        visual_width = maze.width // 2
+
+    filling = " " * max(0, ((visual_width - (len(text_generated) // 2))))
+    print(f"\r{maze.txt_white}{filling}{text_generated}    ")
+
+    filling = " " * max(0, ((visual_width - (len(text_algo_display) // 2))))
+    print(f"\r{filling}{text_algo_display}{STYLE.reset}")
 
 
 if __name__ == "__main__":

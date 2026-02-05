@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/02 16:02:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 09:53:06 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -16,7 +16,7 @@ from typing import Dict, List, Tuple
 from colorama import Cursor
 
 from src.maze.maze_generator import MazeGenerator
-from src.maze.maze_customization import COLORS, MAZE
+from src.maze.maze_customization import COLORS, MAZE, DISPLAY_MODE
 
 
 class MazeSolver():
@@ -70,27 +70,42 @@ class MazeSolver():
                 symbol_to_print = self.maze.visual_empty
 
                 if x == self.maze.entry_x and y == self.maze.entry_y:
-                    current_color = self.maze.color_entry
-                    symbol_to_print = self.maze.visual_wall
+                    if self.maze.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.maze.visual_entry
+                    else:
+                        symbol_to_print = self.maze.visual_wall
+                        current_color = self.maze.color_entry
 
                 elif x == self.maze.exit_x and y == self.maze.exit_y:
-                    current_color = self.maze.color_exit
-                    symbol_to_print = self.maze.visual_wall
+                    if self.maze.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.maze.visual_exit
+                    else:
+                        current_color = self.maze.color_exit
+                        symbol_to_print = self.maze.visual_wall
 
                 elif cell == MAZE.fortytwo:
-                    current_color = self.maze.color_ft
-                    symbol_to_print = self.maze.visual_wall
+                    if self.maze.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.maze.visual_ft
+                    else:
+                        current_color = self.maze.color_ft
+                        symbol_to_print = self.maze.visual_wall
 
                 elif cell == MAZE.empty:
                     if (x, y) in self.path:
-                        current_color = self.maze.color_path
-                        symbol_to_print = self.maze.visual_wall
+                        if self.maze.display == DISPLAY_MODE.emoji:
+                            symbol_to_print = self.maze.visual_path
+                        else:
+                            current_color = self.maze.color_path
+                            symbol_to_print = self.maze.visual_wall
                     else:
                         pass
 
                 elif cell == MAZE.wall:
-                    current_color = self.maze.color_wall
-                    symbol_to_print = self.maze.visual_wall
+                    if self.maze.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.maze.visual_wall
+                    else:
+                        current_color = self.maze.color_wall
+                        symbol_to_print = self.maze.visual_wall
 
                 print(f"{current_color}{symbol_to_print}{COLORS.reset}",
                       end="")
@@ -108,7 +123,10 @@ class MazeSolver():
         curs_x = (x * self.maze.step_x) + 1
         curs_y = y + self.maze.y_offset + 1
 
-        symbol = self.maze.visual_wall
+        if self.maze.display == DISPLAY_MODE.emoji:
+             symbol = self.maze.visual_path
+        else:
+             symbol = self.maze.visual_wall
         color = self.maze.color_path
 
         print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}{COLORS.reset}",
