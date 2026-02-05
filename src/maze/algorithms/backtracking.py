@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:16:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 12:59:45 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 12:38:48 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -109,11 +109,42 @@ def _choose_random_starting_point(generator: Any) -> Tuple[int, int]:
 
 
 def break_random_walls(generator: Any, rendering: bool) -> None:
-    n_wall_to_break = max(0, (generator.width - generator.height))
+    potential_wall_to_break = []
 
-    while n_wall_to_break > 0:
-        x = random.randrange(1, generator.width, 1)
-        y = random.randrange(1, generator.height, 1)
-        if generator.maze[(x, y)] == MAZE.wall:
-            generator.break_wall(x, y, rendering)
-            n_wall_to_break -= 1
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+    for y in range(generator.height):
+        for x in range(generator.width):
+            if (generator.maze[(x, y)] == MAZE.empty):
+                totals_walls = 0
+                corner_walls = []
+                for dir_x, dir_y in directions:
+                    neighbour_x = dir_x + x
+                    neighbour_y = dir_y + y
+
+                    target_x = x + (dir_x * 2)
+                    target_y = y + (dir_y * 2)
+
+                    if (not (0 <= neighbour_x < generator.width and
+                             0 <= neighbour_y < generator.height) or
+                             generator.maze.get((neighbour_x, neighbour_y)) ==
+                             MAZE.wall):
+                        totals_walls += 1
+
+                    if (0 < neighbour_x < generator.width and
+                            0 < neighbour_y < generator.height and
+                            0 < target_x < generator.width and
+                            0 < target_y < generator.height and
+                            generator.maze[(neighbour_x, neighbour_y)] ==
+                            MAZE.wall and generator.maze[(target_x, target_y)]
+                            == MAZE.empty):
+
+                        corner_walls.append((neighbour_x, neighbour_y))
+
+                if totals_walls >= 3 and len(corner_walls) > 0:
+                    potential_wall_to_break.append(random.choice(corner_walls))
+
+    for wall_x, wall_y in potential_wall_to_break:
+        if random.choice([True, False]):
+            generator.break_wall(wall_x, wall_y, rendering)
+
