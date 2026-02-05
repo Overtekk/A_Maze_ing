@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 15:59:17 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 10:04:54 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,7 +21,7 @@ from .maze_config import MazeConfig
 from .maze_errors import MazeGenerationError
 from .maze_fortytwo_pattern import get_fortytwo_pattern as ft_patt
 from .maze_customization import (COLORS, STYLE, ANIM, DISPLAY_MODE, ALGO_MODE,
-                                 MAZE, VISUAL)
+                                 MAZE, VISUAL, EMOJI)
 from .algorithms import (recursive_backtracking, hunt_and_kill,
                          break_random_walls)
 from src.maze.output import maze_output
@@ -73,10 +73,21 @@ class MazeGenerator():
         self.visual_empty: str | VISUAL
         self.visual_wall: str | VISUAL
 
+        # Configure rendering based on display
         if self.display == DISPLAY_MODE.ascii:
             self.visual_empty = VISUAL.empty_block
             self.visual_wall = VISUAL.block
             self.step_x = 2
+
+        elif self.display == DISPLAY_MODE.emoji:
+            self.visual_empty = VISUAL.empty_block
+            self.visual_wall = EMOJI.white
+            self.visual_ft = EMOJI.ft_1
+            self.visual_entry = EMOJI.magenta
+            self.visual_exit = EMOJI.red
+            self.visual_path = EMOJI.blue
+            self.step_x = 2
+
         else:
             self.visual_empty = VISUAL.empty
             self.visual_wall = "#"
@@ -84,7 +95,9 @@ class MazeGenerator():
 
     def maze_generator(self, rendering: bool = False,
                        regen: bool = False) -> None:
-        if rendering and self.display == DISPLAY_MODE.ascii and regen is False:
+        if (rendering and self.display in (DISPLAY_MODE.ascii,
+                                           DISPLAY_MODE.emoji)
+                                           and regen is False):
             print(ANIM.clear, end="")
             while True:
                 user_choice = self._customize_maze_walls_color()
@@ -111,8 +124,9 @@ class MazeGenerator():
             print(ANIM.clear_screen, end="")
 
         # Calculate based on the width to center the text
+        visual_width = self.width
         if rendering:
-            if self.display == DISPLAY_MODE.ascii:
+            if self.display in (DISPLAY_MODE.ascii, DISPLAY_MODE.emoji):
                 visual_width = self.width
             else:
                 visual_width = self.width // 2
@@ -190,11 +204,18 @@ class MazeGenerator():
             color = COLORS.reset
 
             if x == self.entry_x and y == self.entry_y:
-                symbol = self.visual_wall
-                color = self.color_entry
+                if self.display == DISPLAY_MODE.emoji:
+                    symbol = self.visual_entry
+                else:
+                    symbol = self.visual_wall
+                    color = self.color_entry
+
             elif x == self.exit_x and y == self.exit_y:
-                symbol = self.visual_wall
-                color = self.color_exit
+                if self.display == DISPLAY_MODE.emoji:
+                    symbol = self.visual_exit
+                else:
+                    symbol = self.visual_wall
+                    color = self.color_entry
 
             print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}"
                   f"{COLORS.reset}", end="", flush=True)
@@ -208,14 +229,26 @@ class MazeGenerator():
                 symbol_to_print = self.visual_empty
 
                 if x == self.entry_x and y == self.entry_y:
-                    current_color = self.color_entry
-                    symbol_to_print = self.visual_wall
+                    if self.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.visual_entry
+                    else:
+                        symbol_to_print = self.visual_wall
+                        current_color = self.color_entry
+
                 elif x == self.exit_x and y == self.exit_y:
-                    current_color = self.color_exit
-                    symbol_to_print = self.visual_wall
+                    if self.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.visual_exit
+                    else:
+                        symbol_to_print = self.visual_wall
+                        current_color = self.color_exit
+
                 elif cell == MAZE.fortytwo:
-                    current_color = self.color_ft
-                    symbol_to_print = self.visual_wall
+                    if self.display == DISPLAY_MODE.emoji:
+                        symbol_to_print = self.visual_ft
+                    else:
+                        symbol_to_print = self.visual_wall
+                        current_color = self.color_ft
+
                 elif cell == MAZE.wall:
                     current_color = self.color_wall
                     symbol_to_print = self.visual_wall
@@ -231,9 +264,7 @@ class MazeGenerator():
             recursive_backtracking(self, rendering)
             break_random_walls(self, rendering)
 
-        elif self.algorithm == ALGO_MODE.hunt_kill and self.perfect:
-            hunt_and_kill(self, rendering)
-        elif self.algorithm == ALGO_MODE.hunt_kill and self.perfect is False:
+        elif self.algorithm == ALGO_MODE.hunt_kill:
             hunt_and_kill(self, rendering)
 
     def _correcting_coords(self) -> None:
@@ -272,10 +303,18 @@ class MazeGenerator():
 
     def _customize_maze_walls_color(self) -> str:
         print(f"{self.txt_white}Choose walls color:")
-        print(f"{COLORS.white}1. White\t {COLORS.blue}3. Blue\t "
-              f"{COLORS.lightyellow}5. Yellow")
-        print(f"{COLORS.magenta}2. Magenta\t {COLORS.cyan}4. Cyan\t "
-              f"{COLORS.green}6. Green")
+
+        if self.display == DISPLAY_MODE.ascii:
+            print(f"{COLORS.white}1. White\t {COLORS.blue}3. Blue\t "
+                f"{COLORS.lightyellow}5. Yellow")
+            print(f"{COLORS.magenta}2. Magenta\t {COLORS.cyan}4. Cyan\t "
+                f"{COLORS.green}6. Green")
+
+        else:
+            print(f"{COLORS.white}1. White\t {COLORS.blue}3. Blue\t "
+                f"{COLORS.lightyellow}5. Yellow")
+            print(f"{COLORS.magenta}2. Magenta\t {COLORS.yellow}4. Brown\t "
+                f"{COLORS.green}6. Green")
 
         user_choice = input(f"{self.txt_white}Enter choice: ")
         try:
@@ -313,30 +352,79 @@ class MazeGenerator():
             8: COLORS.green,
             9: COLORS.lightblue
         }
-        # Apply user choice color
-        self.color_wall = color.get(choice, COLORS.lightwhite)
 
-        # Prevent the same color from wall-entry
-        if choice == 2:
-            self.color_entry = color.get(7, COLORS.lightmagenta)
-        else:
-            self.color_entry = color.get(2, COLORS.magenta)
+        emoji = {
+            1: EMOJI.white,
+            2: EMOJI.magenta,
+            3: EMOJI.blue,
+            4: EMOJI.brown,
+            5: EMOJI.yellow,
+            6: EMOJI.green,
+            7: EMOJI.red,
+            8: EMOJI.orange
+        }
 
-        # Prevent the same color from wall-path solution
-        if choice == 4:
-            self.color_path = color.get(6, COLORS.lightgreen)
+        random_ft = {
+            1: EMOJI.ft_1,
+            2: EMOJI.ft_2,
+        }
+
+        # Apply user choice color for ascii
+        if self.display == DISPLAY_MODE.ascii:
+            self.color_wall = color.get(choice, COLORS.lightwhite)
+
+            # Prevent the same color from wall-entry
+            if choice == 2:
+                self.color_entry = color.get(7, COLORS.lightmagenta)
+            else:
+                self.color_entry = color.get(2, COLORS.magenta)
+
+            # Prevent the same color from wall-path solution
+            if choice == 4:
+                self.color_path = color.get(6, COLORS.lightgreen)
+            else:
+                self.color_path = color.get(4, COLORS.cyan)
+
+        # Apply user choice color for emoji
         else:
-            self.color_path = color.get(4, COLORS.cyan)
+            if choice == 9:
+                choice = 8
+
+            self.visual_wall = emoji.get(choice, EMOJI.white)
+
+            # Prevent the same color from wall-entry
+            if choice == 2:
+                self.visual_entry = emoji.get(5, EMOJI.white)
+            else:
+                self.visual_entry = emoji.get(2, EMOJI.magenta)
+
+            # Prevent the same color from wall-exit
+            if choice == 7:
+                self.visual_exit = emoji.get(8, EMOJI.orange)
+            else:
+                self.visual_exit = emoji.get(7, EMOJI.red)
+
+            # Prevent the same color from wall-path solution
+            if choice == 3:
+                self.visual_path = emoji.get(6, EMOJI.brown)
+            else:
+                self.visual_path = emoji.get(3, EMOJI.blue)
 
         # Rotate the color of the 42
         if rotate:
             r = random.randint(0, 20)
             if r % 2 == 0:
-                rcolor = random.randint(1, 9)
-                if rcolor == choice:
-                    self.color_ft = COLORS.lightblack
-                else:
-                    self.color_ft = color.get(rcolor, COLORS.lightblack)
+                if self.display == DISPLAY_MODE.ascii:
+                    rcolor = random.randint(1, 9)
+                    if rcolor == choice:
+                        self.color_ft = COLORS.lightblack
+                    else:
+                        self.color_ft = color.get(rcolor, COLORS.lightblack)
+
+                if self.display == DISPLAY_MODE.emoji:
+                    rcolor = random.randint(1, 2)
+                    self.visual_ft = random_ft.get(rcolor, EMOJI.ft_1)
+
         if self.color_ft == self.color_wall:
             self.color_ft = COLORS.lightblack
 

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:35:27 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/03 14:51:17 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 09:33:54 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -55,6 +55,22 @@ class COLORS(Enum):
         return str(self.value)
 
 
+class EMOJI(str, Enum):
+    white = "⬜"
+    magenta = "🟪"
+    blue = "🟦"
+    brown = "🟫"
+    yellow = "🟨"
+    green = "🟩"
+    red = "🟥"
+    orange = "🟧"
+    ft_1 = "🔳"
+    ft_2 = "🔲"
+
+    def __str__(self) -> str:
+        return self.value
+
+
 class STYLE(Enum):
     bright = Style.BRIGHT
     dim = Style.DIM
@@ -74,7 +90,7 @@ class ANIM(str, Enum):
 
 class DISPLAY_MODE(str, Enum):
     ascii = "ascii"
-    better_ascii = "betterascii"
+    simple = "simple"
     emoji = "emoji"
 
     def __str__(self) -> str:
