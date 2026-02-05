@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/31 10:55:56 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/04 09:59:49 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/05 09:38:52 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -91,6 +91,15 @@ def hunt_and_kill(generator: Any, rendering: bool) -> None:
                         mid_x, mid_y = choice(potential_neighbors)
                         generator.break_wall(mid_x, mid_y, rendering)
                         generator.break_wall(tx, ty, rendering)
+
+                        if (not generator.perfect
+                                and len(potential_neighbors) > 1):
+                            if randrange(100) < 33:
+                                potential_neighbors.remove((mid_x, mid_y))
+                                extra_mid_x, extra_mid_y = (
+                                                choice(potential_neighbors))
+                                generator.break_wall(extra_mid_x, extra_mid_y,
+                                                     rendering)
 
                         x, y = tx, ty
                         found = True
