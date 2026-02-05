@@ -10,6 +10,12 @@
 #                                                                           #
 # ************************************************************************* #
 
+"""Recursive backtracking algorithm and helpers.
+
+This module implements the recursive backtracking maze generation
+algorithm and utilities used to break additional random walls.
+"""
+
 import random
 import sys
 
@@ -19,6 +25,14 @@ from maze.maze_customization import MAZE
 
 
 def recursive_backtracking(generator: Any, rendering: bool) -> None:
+    """Carve passages using recursive backtracking.
+
+    Args:
+        generator: The `MazeGenerator` instance whose grid will be
+            mutated.
+        rendering: Whether algorithms should update the terminal as
+            they run.
+    """
     recursion_limit = generator.width * generator.height
     sys.setrecursionlimit(recursion_limit)
 
@@ -92,6 +106,11 @@ def recursive_backtracking(generator: Any, rendering: bool) -> None:
 
 
 def _choose_random_starting_point(generator: Any) -> Tuple[int, int]:
+    """Select a random starting cell for generation.
+
+    The function returns a tuple of coordinates that is not the
+    maze's entry, exit or reserved '42' cell.
+    """
     while True:
         x = random.randrange(1, generator.width, 2)
         y = random.randrange(1, generator.height, 2)
@@ -109,6 +128,11 @@ def _choose_random_starting_point(generator: Any) -> Tuple[int, int]:
 
 
 def break_random_walls(generator: Any, rendering: bool) -> None:
+    """Optionally break random walls to make imperfect mazes.
+
+    Scans for wall candidates and randomly removes some to create
+    loops when the `perfect` option is False.
+    """
     potential_wall_to_break = []
 
     directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]

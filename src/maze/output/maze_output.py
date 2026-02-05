@@ -10,12 +10,25 @@
 #                                                                           #
 # ************************************************************************* #
 
+"""Write maze to a compact textual output format.
+
+The output format encodes the presence of surrounding walls for each
+cell using a single hexadecimal digit per cell, followed by entry and
+exit coordinates and the path directions as NSEW characters.
+"""
+
 from typing import Any
 
 from maze.maze_customization import MAZE
 
 
 def maze_output(generator: Any, path: Any) -> None:
+    """Serialize the generated maze to the configured output file.
+
+    Args:
+        generator: MazeGenerator providing the grid and coordinates.
+        path: Sequence of coordinates forming the solution path.
+    """
     hexa = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C",
             "D", "E", "F"]
     with open(generator.output_file, 'w') as f:
