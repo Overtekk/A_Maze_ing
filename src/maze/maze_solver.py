@@ -6,13 +6,13 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 09:53:06 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 12:53:42 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
 import time
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 from colorama import Cursor
 
 from src.maze.maze_generator import MazeGenerator
@@ -124,9 +124,9 @@ class MazeSolver():
         curs_y = y + self.maze.y_offset + 1
 
         if self.maze.display == DISPLAY_MODE.emoji:
-             symbol = self.maze.visual_path
+            symbol: Any = self.maze.visual_path
         else:
-             symbol = self.maze.visual_wall
+            symbol = self.maze.visual_wall
         color = self.maze.color_path
 
         print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}{COLORS.reset}",
