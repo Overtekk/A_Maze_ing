@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 08:52:05 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 12:50:24 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -167,9 +167,9 @@ def main() -> int:
                             else:
                                 raise ValueError
                         except ValueError:
-                                print(f"{COLORS.red}❌ Error!{COLORS.reset}",
-                                      end="", flush=True)
-                                time.sleep(0.5)
+                            print(f"{COLORS.red}❌ Error!{COLORS.reset}",
+                                  end="", flush=True)
+                            time.sleep(0.5)
 
                     print(f"{STYLE.bright}{COLORS.green}✅ Algorithm "
                           f"successfuly changed!{STYLE.reset}")

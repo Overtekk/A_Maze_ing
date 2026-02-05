@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 10:04:54 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/05 12:59:41 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -71,7 +71,7 @@ class MazeGenerator():
         self.color_path = COLORS.cyan
 
         self.visual_empty: str | VISUAL
-        self.visual_wall: str | VISUAL
+        self.visual_wall: str | VISUAL | EMOJI
 
         # Configure rendering based on display
         if self.display == DISPLAY_MODE.ascii:
@@ -95,9 +95,9 @@ class MazeGenerator():
 
     def maze_generator(self, rendering: bool = False,
                        regen: bool = False) -> None:
-        if (rendering and self.display in (DISPLAY_MODE.ascii,
-                                           DISPLAY_MODE.emoji)
-                                           and regen is False):
+        if (rendering and
+            self.display in (DISPLAY_MODE.ascii, DISPLAY_MODE.emoji) and
+                regen is False):
             print(ANIM.clear, end="")
             while True:
                 user_choice = self._customize_maze_walls_color()
@@ -130,9 +130,9 @@ class MazeGenerator():
                 visual_width = self.width
             else:
                 visual_width = self.width // 2
-            if regen is False:
-                filling = " " * max(0, ((visual_width -
-                                         (len(text_generating) // 2))))
+        if regen is False:
+            filling = " " * max(0, ((visual_width -
+                                     (len(text_generating) // 2))))
 
         # Print the loading text
         if regen is False:
@@ -306,15 +306,15 @@ class MazeGenerator():
 
         if self.display == DISPLAY_MODE.ascii:
             print(f"{COLORS.white}1. White\t {COLORS.blue}3. Blue\t "
-                f"{COLORS.lightyellow}5. Yellow")
+                  f"{COLORS.lightyellow}5. Yellow")
             print(f"{COLORS.magenta}2. Magenta\t {COLORS.cyan}4. Cyan\t "
-                f"{COLORS.green}6. Green")
+                  f"{COLORS.green}6. Green")
 
         else:
             print(f"{COLORS.white}1. White\t {COLORS.blue}3. Blue\t "
-                f"{COLORS.lightyellow}5. Yellow")
+                  f"{COLORS.lightyellow}5. Yellow")
             print(f"{COLORS.magenta}2. Magenta\t {COLORS.yellow}4. Brown\t "
-                f"{COLORS.green}6. Green")
+                  f"{COLORS.green}6. Green")
 
         user_choice = input(f"{self.txt_white}Enter choice: ")
         try:
