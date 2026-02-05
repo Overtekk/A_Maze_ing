@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 12:59:41 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/05 13:01:25 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -219,7 +219,8 @@ class MazeGenerator():
 
             print(Cursor.POS(curs_x, curs_y) + f"{color}{symbol}"
                   f"{COLORS.reset}", end="", flush=True)
-            time.sleep(0.001)
+            if self.height < 100 or self.width < 100:
+                time.sleep(0.001)
 
     def print_maze(self) -> None:
         for y in range(self.height):
