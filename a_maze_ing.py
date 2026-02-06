@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 14:56:54 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/06 07:52:31 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -201,10 +201,10 @@ def main() -> int:
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2
 
-    # except Exception as e:
-    #     print(f"Unexpected error of type - {type(e).__name__}: {e}",
-    #           file=sys.stderr)
-    #     return 1
+    except Exception as e:
+        print(f"Unexpected error of type - {type(e).__name__}: {e}",
+              file=sys.stderr)
+        return 1
 
     return 0
 
