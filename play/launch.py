@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 11:06:05 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 14:36:11 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -20,12 +20,15 @@ controls.
 
 import sys
 import readchar
-import time
+
+from colorama import Cursor
 
 from maze import (MazeConfig, MazeGenerator, MazeConfigError,
                   MazeGenerationError)
-from maze.maze_customization import (MAZE, ANIM, STYLE, ALGO_MODE,
-                                     DISPLAY_MODE, COLORS)
+from maze.maze_customization import (MAZE, STYLE, DISPLAY_MODE, COLORS)
+
+CURSOR_HIDE = "\033[?25l"
+CURSOR_SHOW = "\033[?25h"
 
 
 def launch_game() -> None:
@@ -59,16 +62,15 @@ def play(maze: "MazeGenerator") -> None:
         maze: The `MazeGenerator` instance containing the grid and logic to be
               played.
     """
+    print(CURSOR_HIDE, end="", flush=True)
     player_pos = [maze.entry_x, maze.entry_y]
     steps = 0
+
+    display_text(maze, steps)
 
     while True:
         old_x, old_y = player_pos[0], player_pos[1]
         new_x, new_y = old_x, old_y
-
-        if (new_x == maze.exit_x and new_y == maze.exit_y):
-            print(f"{COLORS.lightgreen}\n🎆🎆 GG! 🎆🎆{COLORS.reset}")
-            break
 
         k = readchar.readkey()
 
@@ -81,7 +83,9 @@ def play(maze: "MazeGenerator") -> None:
         elif k == 'd':
             new_x = old_x + 1
         elif k == 'e':
-            print(f"\n{COLORS.red}Goodbye 👋{COLORS.reset}")
+            print(Cursor.POS(1, maze.height + maze.y_offset + 3) +
+                  f"{COLORS.red}Goodbye 👋{COLORS.reset}")
+            print(CURSOR_SHOW, end="", flush=True)
             break
 
         if (new_x, new_y) != (old_x, old_y):
@@ -93,47 +97,60 @@ def play(maze: "MazeGenerator") -> None:
                 player_pos[0], player_pos[1] = new_x, new_y
                 maze.maze[(new_x, new_y)] = MAZE.entry
                 maze.entry_x, maze.entry_y = new_x, new_y
+
                 steps += 1
-                print(ANIM.clear_screen)
                 display_text(maze, steps)
-                maze.print_maze()
-                time.sleep(100/1000)
+
+                curs_old_x = (old_x * maze.step_x) + 1
+                curs_old_y = old_y + maze.y_offset
+                curs_new_x = (new_x * maze.step_x) + 1
+                curs_new_y = new_y + maze.y_offset
+
+                if maze.display == DISPLAY_MODE.emoji:
+                    print(Cursor.POS(curs_old_x, curs_old_y) +
+                          f"{maze.visual_empty}{COLORS.reset}", end="",
+                          flush=True)
+                    print(Cursor.POS(curs_new_x, curs_new_y) +
+                          f"{maze.visual_entry}{COLORS.reset}", end="",
+                          flush=True)
+
+                if maze.display in (DISPLAY_MODE.ascii, DISPLAY_MODE.simple):
+                    print(Cursor.POS(curs_old_x, curs_old_y) +
+                          f"{maze.visual_empty}{COLORS.reset}", end="",
+                          flush=True)
+                    print(Cursor.POS(curs_new_x, curs_new_y) +
+                          f"{maze.visual_entry}{COLORS.reset}", end="",
+                          flush=True)
+
+        if (new_x == maze.exit_x and new_y == maze.exit_y):
+            print(Cursor.POS(1, maze.height + maze.y_offset + 3) +
+                  f"{COLORS.lightgreen}🎆🎆 GG! 🎆🎆{COLORS.reset}")
+            print(CURSOR_SHOW, end="", flush=True)
+            break
 
 
-def display_text(maze: "MazeGenerator", count: int) -> None:
-    """Print small summary text above the rendered maze.
+def display_text(maze: "MazeGenerator", steps: int) -> None:
+    """Render the status text below the maze.
 
-    The function chooses a centered title string and a brief line
-    describing the current algorithm, display mode, the k to quit the
-    game and the number of walks.
+    Displays the quit instruction and the current step count. The text is
+    centered horizontally relative to the maze width and positioned on the
+    line immediately following the maze bottom margin.
 
     Args:
-        maze: The `MazeGenerator` used to derive display properties.
-        count: The number of walks the player have done.
+        maze: The `MazeGenerator` instance used to calculate positioning.
+        steps: The current number of steps taken by the player.
     """
-    text_generated = "-Maze Generated-"
-    if maze.algorithm == ALGO_MODE.rb:
-        text_algo_display = "Mode: recursive backtracking"
-    if maze.algorithm == ALGO_MODE.hunt_kill:
-        text_algo_display = "Mode: hunt and kill"
-    text_algo_display += f" | Display: {maze.display}"
-    text_quit_count = "Quit: 'e'"
-    if count > 0:
-        text_quit_count += f"| Count: {count}"
-
-    if maze.display in (DISPLAY_MODE.ascii, DISPLAY_MODE.emoji):
-        visual_width = maze.width
+    if steps > 0:
+        text_infos = f"Quit: 'E' | Steps: {steps}"
     else:
-        visual_width = maze.width // 2
+        text_infos = f"Quit: 'E' | Step: {steps}"
+    line_y = maze.height + maze.y_offset + 1
 
-    filling = " " * max(0, ((visual_width - (len(text_generated) // 2))))
-    print(f"\r{maze.txt_white}{filling}{text_generated}    ")
+    visual_width = maze.width // 2
+    padding = " " * max(0, (visual_width - len(text_infos)) // 2)
 
-    filling = " " * max(0, ((visual_width - (len(text_algo_display) // 2))))
-    print(f"\r{filling}{text_algo_display}{STYLE.reset}")
-
-    filling = " " * max(0, ((visual_width - (len(text_quit_count) // 2))))
-    print(f"\r{filling}{text_quit_count}{STYLE.reset}")
+    print(Cursor.POS(1, line_y) + f"{padding}{text_infos}{STYLE.reset}",
+          end="", flush=True)
 
 
 if __name__ == "__main__":
