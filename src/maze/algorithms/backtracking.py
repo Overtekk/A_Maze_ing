@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  backtracking.py                                   :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:16:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 09:55:06 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/07 14:30:18 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -36,7 +36,8 @@ def recursive_backtracking(generator: Any, rendering: bool) -> None:
     recursion_limit = generator.width * generator.height
     sys.setrecursionlimit(recursion_limit)
 
-    start_coords = _choose_random_starting_point(generator)
+    start_coords = generator.entry_coord
+    # start_coords = _choose_random_starting_point(generator)
     start_coords_x, start_coords_y = start_coords
     generator.break_wall(start_coords_x, start_coords_y, rendering)
 

@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_config.py                                    :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 10:27:45 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/07 14:12:08 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -33,8 +33,8 @@ class MazeConfig(BaseModel):
     validators convert string coordinates and enforce permitted
     display/algorithm values.
     """
-    width: int = Field(ge=5)
-    height: int = Field(ge=5)
+    width: int = Field(ge=3)
+    height: int = Field(ge=3)
     entry: Tuple[int, int]
     exit: Tuple[int, int]
     output_file: str = Field(pattern=r'.+\.txt$')
@@ -130,6 +130,9 @@ class MazeConfig(BaseModel):
         if not (0 <= exit_x < self.width and 0 <= exit_y < self.height):
             raise MazeConfigError(f"Exit coords: {self.exit} is outside maze"
                                   " dimensions.")
+
+        if self.width == 3 and self.height == 3:
+            raise MazeConfigError("Maze dimensions are invalid")
 
         if self.entry == self.exit:
             raise MazeConfigError("Entry and Exit cannot be at the exact same "
