@@ -10,12 +10,14 @@ This module contains the maze generation logic, and the solving part. You can ch
 ## 🔑 Public API
 
 ```python
-from maze import MazeConfig, MazeGenerator, MazeSolver
+from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGenerationError
 ```
 
 - MazeConfig — base model class checking configuration and creating the config object.
 - MazeGenerator — factory used to instantiate maze and print it.
 - MazeSolver — class to check if a maze is solvable.
+- MazeConfigError — custom error inherited from MazeError, and Exception to catch config error.
+- MazeGenerationError — custom error inherited from MazeError, and Exception to catch generation error.
 
 ---
 
@@ -36,31 +38,35 @@ from maze import MazeConfig, MazeGenerator, MazeSolver
 ```python
 #!/usr/bin/env python3
 
-from maze import MazeConfig, MazeGenerator, MazeSolver
+from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGenerationError
 
 # Generate the config object with custom parameters.
-config = MazeConfig(width=50, height=50, entry=(0,0), exit=(18,12), output_file="maze.txt", perfect=False, display="emoji", algorithm="rb")
+try:
+	config = MazeConfig(width=50, height=50, entry=(0,0), exit=(18,12), output_file="maze.txt", perfect=False, display="emoji", algorithm="rb")
 
-# Instanciate a new maze.
-generator = MazeGenerator(config)
+	# Instanciate a new maze.
+	generator = MazeGenerator(config)
 
-# Generate a new maze and display it.
-generator.maze_generator(rendering=True)
+	# Generate a new maze and display it.
+	generator.maze_generator(rendering=True)
 
-# Display the maze parameters.
-generator.get_maze_parameters()
+	# Display the maze parameters.
+	generator.get_maze_parameters()
 
-# Create new config from file.
-cool_config = MazeConfig.from_config_file("config.txt")
+	# Create new config from file.
+	cool_config = MazeConfig.from_config_file("config.txt")
 
-# Instanciate another maze and do not render it.
-my_super_maze = MazeGenerator(cool_config)
-my_super_maze.maze_generator(rendering=False)
+	# Instanciate another maze and do not render it.
+	my_super_maze = MazeGenerator(cool_config)
+	my_super_maze.maze_generator(rendering=False)
 
-# Solve a maze and print the result
-solver = MazeSolver(my_super_maze)
-solver.find_path()
-solver.print_maze_solver()
+	# Solve a maze and print the result
+	solver = MazeSolver(my_super_maze)
+	solver.find_path()
+	solver.print_maze_solver()
+
+except (FileNotFoundError, ValueError, MazeConfigError, MazeGenerationError) as e:
+    print(f"{type(e).__name__}: {e}", file=sys.stderr)
 ```
 
 ---

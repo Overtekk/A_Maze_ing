@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:18:29 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 14:58:29 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 09:48:31 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -20,11 +20,11 @@ PIP = $(if $(wildcard $(VENV_PIP)), $(VENV_PIP), pip)
 MYPY_FLAGS= --warn-return-any --warn-unused-ignores --ignore-missing-imports \
 			--disallow-untyped-defs --check-untyped-defs
 
-SRC_FILES=a_maze_ing.py src/
+SRC_FILES=a_maze_ing.py src/ play/
 CONFIG=config.txt
 
 # Prevent rule to be associated with files.
-.PHONY: install run debug clean lint lint-strict venv pipfreeze all
+.PHONY: install run debug clean lint lint-strict venv pipfreeze all play
 
 # Install all dependencies needed for this project.
 install:
@@ -75,6 +75,15 @@ pipfreeze:
 # Create venv and install dependencies.
 all: venv install
 				@echo "$(GREEN)✔ Environment set up ready!$(RESET)"
+
+# Run the "play mode" and install readchar if not installed
+play:
+				@if ! $(PYTHON) -c "import readchar" 2>/dev/null; then \
+						echo "$(RED)readchar not installed. Installing.....$(RESET)"; \
+						$(PIP) install readchar; \
+						echo "$(GREEN)✔ Success, readchar installed!$(RESET)"; \
+				fi
+				@$(PYTHON) play/launch.py play/config_play.txt
 
 # Colors
 RESET=\033[0m
