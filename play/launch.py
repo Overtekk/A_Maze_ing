@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 10:51:36 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 10:53:07 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -97,7 +97,7 @@ def play(maze: "MazeGenerator") -> None:
                 print(ANIM.clear_screen)
                 display_text(maze, count)
                 maze.print_maze()
-                time.sleep(500/1000)
+                time.sleep(100/1000)
 
 
 def display_text(maze: "MazeGenerator", count: int) -> None:
