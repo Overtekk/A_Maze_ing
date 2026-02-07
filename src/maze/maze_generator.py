@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 13:34:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 13:48:11 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -75,6 +75,8 @@ class MazeGenerator():
         # Generate seed if user didn't give it.
         if self.seed is None:
             self._generate_random_seed()
+
+        random.seed(self.seed)
 
         # Correct coordinates for the different algorithms
         self._correcting_coords()
@@ -188,8 +190,6 @@ class MazeGenerator():
 
         # Start the random sequence based on the seed given/generated
         if regen is False:
-            random.seed(self.seed)
-        else:
             self._generate_random_seed()
             random.seed(self.seed)
 

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 13:33:57 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 13:48:41 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -63,8 +63,6 @@ def main() -> int:
 
         generator.maze_generator(rendering=True)
 
-        # print(generator.get_maze_parameters())
-
         show_menu = True
         choice2 = True
         while True and show_menu:
@@ -73,7 +71,8 @@ def main() -> int:
             else:
                 algo = "hunt and kill"
 
-            print(generator.get_maze_parameters())
+            # print(generator.get_maze_parameters())
+
             if (len(generator.fourtytwo_coord) <= 0):
                 print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can't be"
                       f" printed!{STYLE.reset}")
@@ -206,10 +205,10 @@ def main() -> int:
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2
 
-    # except Exception as e:
-    #     print(f"Unexpected error of type - {type(e).__name__}: {e}",
-    #           file=sys.stderr)
-    #     return 1
+    except Exception as e:
+        print(f"Unexpected error of type - {type(e).__name__}: {e}",
+              file=sys.stderr)
+        return 1
 
     return 0
 
