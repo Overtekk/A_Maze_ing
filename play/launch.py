@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 10:53:07 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 11:06:05 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -52,7 +52,7 @@ def play(maze: "MazeGenerator") -> None:
 
     Listens for user input via keyboard to move the player character through
     the maze. It handles collision detection with walls, updates the player's
-    position, tracks the move count, and refreshes the display until the exit
+    position, tracks the move steps, and refreshes the display until the exit
     is reached or the user quits.
 
     Args:
@@ -60,7 +60,7 @@ def play(maze: "MazeGenerator") -> None:
               played.
     """
     player_pos = [maze.entry_x, maze.entry_y]
-    count = 0
+    steps = 0
 
     while True:
         old_x, old_y = player_pos[0], player_pos[1]
@@ -93,9 +93,9 @@ def play(maze: "MazeGenerator") -> None:
                 player_pos[0], player_pos[1] = new_x, new_y
                 maze.maze[(new_x, new_y)] = MAZE.entry
                 maze.entry_x, maze.entry_y = new_x, new_y
-                count += 1
+                steps += 1
                 print(ANIM.clear_screen)
-                display_text(maze, count)
+                display_text(maze, steps)
                 maze.print_maze()
                 time.sleep(100/1000)
 

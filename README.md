@@ -32,6 +32,9 @@ make install
 # Run the script with the default configuration
 make run
 
+# Run the script with the 'play mode' (only available in the A_Maze_ing project)
+make play
+
 # Clean build artifacts
 make clean
 ```
@@ -107,6 +110,11 @@ make run
 python3 a_maze_ing.py config.txt
 ```
 
+##### or you canse use the 'play mode' (only available in the A_Maze_ing project). That create the maze and that you can play
+```bash
+make play
+```
+
 ---
 
 ## 📑 Configuration file format
@@ -142,12 +150,24 @@ When you launch the project, the maze will be draw and a menu will appear at the
 |5|Show seed|Show the seed used|
 |6|Quit|Quit the menu and the program|
 
+--
+
+## 🎮 Play mode
+
+Using `make play` you can launch the **play mode**. It will generate a maze so that you can play on it **using the `WASD` keys, and the `E` key to quit**.
+
+It works by using the `readchar` library the checking what key have been pressed. Then, if it can move, it change the entry/player position and print the maze.\
+There is also a `count` number to try to solve the maze with the fewest possible steps.
+
+The rule `make play` will auto-install the library in the virtual environment if it not already installed.
+
 ---
 
 ## 📂 Architecture overview:
 
 - **a_maze_ing.py**: The main script of the project.
-- **src/utils/**: utils functions for the A_Maze_Ing project.
+- **src/utils/***: utils functions for the A_Maze_Ing project.
+- **src/play/***: script to launch the maze in 'play mode'.
 - **src/maze/***: The reutilisable maze generation module.
 
 ### ✍ How all of this works?
