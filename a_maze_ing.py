@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  a_maze_ing.py                                     :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: roandrie, rruiz                           +#+  +:+       +#+         #
+#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/06 07:52:31 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 10:25:04 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -72,6 +72,9 @@ def main() -> int:
                 algo = "recursive backtracking"
             else:
                 algo = "hunt and kill"
+
+            if (len(generator.fourtytwo_coord) <= 0):
+                print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can' t be printed!{STYLE.reset}")
 
             print(f"\n{COLORS.magenta}=== {STYLE.bright}{COLORS.red}A-"
                   f"{COLORS.blue}Maze-{COLORS.green}ing {COLORS.reset}"

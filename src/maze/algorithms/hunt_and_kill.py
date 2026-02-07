@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  hunt_and_kill.py                                  :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: roandrie, rruiz                           +#+  +:+       +#+         #
+#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/31 10:55:56 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/05 14:10:32 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/06 15:11:19 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -107,7 +107,7 @@ def hunt_and_kill(generator: Any, rendering: bool) -> None:
 
                         if (not generator.perfect
                                 and len(potential_neighbors) > 1):
-                            if randrange(100) < 33:
+                            if randrange(100) < 66:
                                 potential_neighbors.remove((mid_x, mid_y))
                                 extra_mid_x, extra_mid_y = (
                                                 choice(potential_neighbors))

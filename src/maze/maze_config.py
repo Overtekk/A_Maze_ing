@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_config.py                                    :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: roandrie, rruiz                           +#+  +:+       +#+         #
+#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 16:11:13 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/07 10:27:45 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -33,7 +33,7 @@ class MazeConfig(BaseModel):
     validators convert string coordinates and enforce permitted
     display/algorithm values.
     """
-    width: int = Field(ge=7)
+    width: int = Field(ge=5)
     height: int = Field(ge=5)
     entry: Tuple[int, int]
     exit: Tuple[int, int]

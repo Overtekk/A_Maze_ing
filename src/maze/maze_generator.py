@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_generator.py                                 :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: roandrie, rruiz                           +#+  +:+       +#+         #
+#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 14:45:05 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/06 16:10:04 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -208,7 +208,8 @@ class MazeGenerator():
             if rendering:
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
-                                      "this is so rare!")
+                                          "this is so rare!")
+
         maze_output(self, solver.path)
 
         # Put the cursor at the bottom of the screen

@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_solver.py                                    :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: roandrie, rruiz                           +#+  +:+       +#+         #
+#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/05 14:44:20 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/06 17:00:19 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -84,6 +84,43 @@ class MazeSolver():
                     queue.append(neighbour)
                     came_from[neighbour_x, neighbour_y] = (cell_x, cell_y)
                     visited.append(neighbour)
+
+    def path_checker(self) -> int:
+        """Count the number of different paths from entry to exit.
+
+        Returns:
+            The total number of distinct paths possible in the maze.
+        """
+        number_of_paths = 0
+
+        def explore_recursive(x: int, y: int, visited: set) -> None:
+            nonlocal number_of_paths
+            if (x, y) == (self.maze.exit_x, self.maze.exit_y):
+                number_of_paths += 1
+                return
+
+            directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+            for move_x, move_y in directions:
+                neighbor_x = x + move_x
+                neighbor_y = y + move_y
+                neighbor = (neighbor_x, neighbor_y)
+
+                if ((0 <= neighbor_x < self.maze.width and
+                    0 <= neighbor_y < self.maze.height) and
+                        neighbor not in visited and
+                        self.maze.maze[(neighbor_x, neighbor_y)] in
+                        (MAZE.empty, MAZE.exit)):
+
+                    visited.add(neighbor)
+                    explore_recursive(neighbor_x, neighbor_y, visited)
+                    visited.remove(neighbor)
+
+        visited = {(self.maze.entry_x, self.maze.entry_y)}
+        explore_recursive(self.maze.entry_x, self.maze.entry_y, visited)
+
+        return number_of_paths
+
 
     def print_maze_solver(self) -> None:
         """Render the maze highlighting the discovered path.
