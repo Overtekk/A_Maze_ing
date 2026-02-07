@@ -92,6 +92,25 @@ This project must include a Makefile with strict following rules:
 - Include type hint *(def func (name:str) -> bool)*. Use **Mypy** to check any potential error `pip install mypy`, then `mypy script.py`
 - Include docstrings following **PEP 257** for better understanding.
 
+---
+
+### 🐨 Result
+
+<table width="100%">
+  <tr>
+    <th width="50%" align="center">Emoji Display</th>
+	<th width="50%" align="center">Ascii Display</th>
+	</tr>
+  <tr>
+    <td>
+      <img src="assets_github/maze_generation_emoji.gif" alt="Demo emoji" width="100%">
+    </td>
+    <td>
+      <img src="assets_github/maze_generation_ascii.gif" alt="Demo ascii" width="100%">
+    </td>
+  </tr>
+</table>
+
 ## 🔷 Instructions
 
 #### 1. First, clone this repository:
@@ -150,7 +169,7 @@ When you launch the project, the maze will be draw and a menu will appear at the
 |5|Show seed|Show the seed used|
 |6|Quit|Quit the menu and the program|
 
---
+---
 
 ## 🎮 Play mode
 
@@ -160,6 +179,10 @@ It works by using the `readchar` library the checking what key have been pressed
 There is also a `count` number to try to solve the maze with the fewest possible steps.
 
 The rule `make play` will auto-install the library in the virtual environment if it not already installed.
+
+<div align="center">
+  <img src="assets_github/maze_play_mode.gif" alt="Démonstration" width="300" />
+</div>
 
 ---
 
