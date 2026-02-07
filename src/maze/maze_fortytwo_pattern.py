@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_fortytwo_pattern.py                          :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:41:10 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 10:20:43 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/07 13:33:07 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -32,7 +32,7 @@ def get_fortytwo_pattern(width: int, height: int) -> Set[Tuple[int, int]]:
     """
     if width <= 9 or height <= 9:
         return set()
-    
+
     center_x, center_y = width // 2, height // 2
 
     return {

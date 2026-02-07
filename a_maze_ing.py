@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  a_maze_ing.py                                     :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 10:25:04 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/07 13:33:57 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -73,8 +73,10 @@ def main() -> int:
             else:
                 algo = "hunt and kill"
 
+            print(generator.get_maze_parameters())
             if (len(generator.fourtytwo_coord) <= 0):
-                print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can' t be printed!{STYLE.reset}")
+                print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can't be"
+                      f" printed!{STYLE.reset}")
 
             print(f"\n{COLORS.magenta}=== {STYLE.bright}{COLORS.red}A-"
                   f"{COLORS.blue}Maze-{COLORS.green}ing {COLORS.reset}"
@@ -204,10 +206,10 @@ def main() -> int:
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2
 
-    except Exception as e:
-        print(f"Unexpected error of type - {type(e).__name__}: {e}",
-              file=sys.stderr)
-        return 1
+    # except Exception as e:
+    #     print(f"Unexpected error of type - {type(e).__name__}: {e}",
+    #           file=sys.stderr)
+    #     return 1
 
     return 0
 

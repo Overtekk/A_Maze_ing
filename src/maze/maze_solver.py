@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_solver.py                                    :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/06 17:00:19 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/07 13:35:24 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -93,7 +93,7 @@ class MazeSolver():
         """
         number_of_paths = 0
 
-        def explore_recursive(x: int, y: int, visited: set) -> None:
+        def explore_recursive(x: int, y: int, visited: set[Any]) -> None:
             nonlocal number_of_paths
             if (x, y) == (self.maze.exit_x, self.maze.exit_y):
                 number_of_paths += 1
@@ -120,7 +120,6 @@ class MazeSolver():
         explore_recursive(self.maze.entry_x, self.maze.entry_y, visited)
 
         return number_of_paths
-
 
     def print_maze_solver(self) -> None:
         """Render the maze highlighting the discovered path.

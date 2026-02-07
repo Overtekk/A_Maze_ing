@@ -3,10 +3,10 @@
 #                                                      :::      ::::::::    #
 #  maze_generator.py                                 :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/06 16:10:04 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/07 13:34:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -208,7 +208,7 @@ class MazeGenerator():
             if rendering:
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
-                                          "this is so rare!")
+                                      "this is so rare!")
 
         maze_output(self, solver.path)
 
@@ -355,6 +355,20 @@ class MazeGenerator():
                 self.width += 1
             if self.height % 2 == 0:
                 self.height += 1
+            if self.exit_coord[0] % 2 == 0:
+                if random.choice([True, False]):
+                    self.exit_coord = (self.exit_coord[0] + 1,
+                                       self.exit_coord[1])
+                else:
+                    self.exit_coord = (self.exit_coord[0] - 1,
+                                       self.exit_coord[1])
+            if self.exit_coord[1] % 2 == 0:
+                if random.choice([True, False]):
+                    self.exit_coord = (self.exit_coord[0],
+                                       self.exit_coord[1] + 1)
+                else:
+                    self.exit_coord = (self.exit_coord[0],
+                                       self.exit_coord[1] - 1)
 
         if self.exit_coord[0] >= self.width - 1:
             self.exit_coord = (self.width - 2, self.exit_coord[1])
