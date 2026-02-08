@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 14:46:26 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/08 22:14:14 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -75,6 +75,8 @@ class MazeGenerator():
         # Generate seed if user didn't give it.
         if self.seed is None:
             self._generate_random_seed()
+
+        random.seed(self.seed)
 
         # Correct coordinates for the different algorithms
         self._correcting_coords()
@@ -188,8 +190,6 @@ class MazeGenerator():
 
         # Start the random sequence based on the seed given/generated
         if regen is False:
-            random.seed(self.seed)
-        else:
             self._generate_random_seed()
             random.seed(self.seed)
 
@@ -200,7 +200,6 @@ class MazeGenerator():
 
         self._choose_algo(rendering)
 
-
         # Check if the maze can be solved
         from .maze_solver import MazeSolver
         solver = MazeSolver(self)
@@ -209,7 +208,7 @@ class MazeGenerator():
             if rendering:
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
-                                          "this is so rare!")
+                                      "this is so rare!")
 
         path_number = solver.path_checker()
         if self.perfect is False and path_number == 1:
@@ -369,17 +368,17 @@ class MazeGenerator():
             if self.exit_coord[0] % 2 == 0:
                 if random.choice([True, False]):
                     self.exit_coord = (self.exit_coord[0] + 1,
-                                          self.exit_coord[1])
+                                       self.exit_coord[1])
                 else:
                     self.exit_coord = (self.exit_coord[0] - 1,
-                                          self.exit_coord[1])
+                                       self.exit_coord[1])
             if self.exit_coord[1] % 2 == 0:
                 if random.choice([True, False]):
                     self.exit_coord = (self.exit_coord[0],
-                                          self.exit_coord[1] + 1)
+                                       self.exit_coord[1] + 1)
                 else:
                     self.exit_coord = (self.exit_coord[0],
-                                          self.exit_coord[1] - 1)
+                                       self.exit_coord[1] - 1)
 
         if self.exit_coord[0] >= self.width - 1:
             self.exit_coord = (self.width - 2, self.exit_coord[1])
@@ -430,7 +429,7 @@ class MazeGenerator():
             print(f"{COLORS.magenta}2. Magenta\t {COLORS.yellow}4. Brown\t "
                   f"{COLORS.green}6. Green")
 
-        user_choice = input(f"{self.txt_white}Enter choice: ")
+        user_choice = input(f"{self.txt_white}Enter choice (1-6): ")
         try:
             choice = int(user_choice)
 
