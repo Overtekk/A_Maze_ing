@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 16:16:22 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 14:30:18 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/08 19:13:03 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -37,6 +37,18 @@ def recursive_backtracking(generator: Any, rendering: bool) -> None:
     sys.setrecursionlimit(recursion_limit)
 
     start_coords = generator.entry_coord
+
+    if start_coords[0] % 2 == 0:
+        if random.choice([True, False]):
+            start_coords = (start_coords[0] + 1, start_coords[1])
+        else:
+            start_coords = (start_coords[0] - 1, start_coords[1])
+    if start_coords[1] % 2 == 0:
+        if random.choice([True, False]):
+            start_coords = (start_coords[0], start_coords[1] + 1)
+        else:
+            start_coords = (start_coords[0], start_coords[1] - 1)
+
     # start_coords = _choose_random_starting_point(generator)
     start_coords_x, start_coords_y = start_coords
     generator.break_wall(start_coords_x, start_coords_y, rendering)

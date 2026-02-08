@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 14:36:11 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/08 22:21:25 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -21,11 +21,12 @@ controls.
 import sys
 import readchar
 
+from time import sleep
 from colorama import Cursor
 
 from maze import (MazeConfig, MazeGenerator, MazeConfigError,
                   MazeGenerationError)
-from maze.maze_customization import (MAZE, STYLE, DISPLAY_MODE, COLORS)
+from maze.maze_customization import (MAZE, STYLE, COLORS, ANIM, DISPLAY_MODE)
 
 CURSOR_HIDE = "\033[?25l"
 CURSOR_SHOW = "\033[?25h"
@@ -43,14 +44,45 @@ def launch_game() -> None:
         maze_configuration = MazeConfig.from_config_file("play/config.txt")
 
         maze = MazeGenerator(maze_configuration)
-        maze.maze_generator(rendering=True)
+
+        print(f"{COLORS.magenta}{STYLE.bright}\nChoose gamemode:")
+        print(f"{COLORS.lightcyan}1. Normal")
+        print(f"{COLORS.lightcyan}2. Fog of war{STYLE.reset}")
+
+        while True:
+            user_choice = input(f"{COLORS.lightgreen}Choice (1-2): "
+                                f"{COLORS.reset}")
+            try:
+                choice = int(user_choice)
+                if 1 <= choice <= 2:
+                    break
+                else:
+                    raise ValueError
+            except ValueError:
+                print(f"{COLORS.red}❌ Error!{COLORS.reset}", end="",
+                      flush=True)
+                print(Cursor.UP(1) + "\r" + ANIM.clear, end="")
+
+        if choice == 1:
+            gamemode = "normal"
+            print(f"{COLORS.green}✅ Launching 'normal play mode'\n")
+            sleep(1)
+            maze.maze_generator(rendering=True)
+        else:
+            gamemode = "fow"
+            print(f"{COLORS.green}✅ Launching 'fog of war play mode'\n")
+            sleep(1)
+            print(ANIM.clear_screen, end="")
+            maze.maze_generator(rendering=False)
+
     except (FileNotFoundError, ValueError, MazeConfigError,
             MazeGenerationError) as e:
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
-    play(maze)
+
+    play(maze, gamemode)
 
 
-def play(maze: "MazeGenerator") -> None:
+def play(maze: "MazeGenerator", gamemode: str) -> None:
     """Run the main interactive game loop.
 
     Listens for user input via keyboard to move the player character through
@@ -64,9 +96,70 @@ def play(maze: "MazeGenerator") -> None:
     """
     print(CURSOR_HIDE, end="", flush=True)
     player_pos = [maze.entry_x, maze.entry_y]
+    exit_pos = [maze.exit_x, maze.exit_y]
     steps = 0
+    obs_to_render = [
+                    (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1),
+                    (-2, 0),  (-1, 0), (1, 0),  (2, 0),
+                    (-2, 1),  (-1, 1),  (0, 1),  (1, 1),  (2, 1)
+                    ]
 
     display_text(maze, steps)
+
+    def render_fow(pos_x: int, pos_y: int) -> None:
+        for dir_x, dir_y in obs_to_render:
+            x, y = (pos_x + dir_x), (pos_y + dir_y)
+
+            if (x, y) in maze.maze:
+                curs_x = (x * maze.step_x) + 1
+                curs_y = y + maze.y_offset
+
+                if maze.display == DISPLAY_MODE.emoji:
+                    if maze.maze[(x, y)] == MAZE.wall:
+                        print(Cursor.POS(curs_x, curs_y) +
+                              f"{maze.visual_wall}{COLORS.reset}", end="",
+                              flush=True)
+                    elif maze.maze[(x, y)] == MAZE.fortytwo:
+                        print(Cursor.POS(curs_x, curs_y) +
+                              f"{maze.visual_ft}{COLORS.reset}", end="",
+                              flush=True)
+                    elif maze.maze[(x, y)] == MAZE.exit:
+                        print(Cursor.POS(curs_x, curs_y) +
+                              f"{maze.visual_exit}{COLORS.reset}", end="",
+                              flush=True)
+                else:
+                    if maze.maze[(x, y)] == MAZE.wall:
+                        print(Cursor.POS(curs_x, curs_y) +
+                              f"{maze.color_wall}{maze.visual_wall}"
+                              f"{COLORS.reset}", end="", flush=True)
+                    elif maze.maze[(x, y)] == MAZE.fortytwo:
+                        print(Cursor.POS(curs_x, curs_y) +
+                              f"{maze.color_ft}{maze.visual_wall}"
+                              f"{COLORS.reset}", end="", flush=True)
+                    elif maze.maze[(x, y)] == MAZE.exit:
+                        print(Cursor.POS(curs_x, curs_y) +
+                              f"{maze.color_exit}{maze.visual_wall}"
+                              f"{COLORS.reset}", end="", flush=True)
+
+    if gamemode == "fow":
+        render_fow(player_pos[0], player_pos[1])
+
+        px_screen_entry = (player_pos[0] * maze.step_x) + 1
+        py_screen_entry = player_pos[1] + maze.y_offset
+        px_screen_exit = (exit_pos[0] * maze.step_x) + 1
+        py_screen_exit = exit_pos[1] + maze.y_offset
+        if maze.display == DISPLAY_MODE.emoji:
+            print(Cursor.POS(px_screen_entry, py_screen_entry) +
+                  f"{maze.visual_entry}", end="", flush=True)
+            print(Cursor.POS(px_screen_exit, py_screen_exit) +
+                  f"{maze.visual_exit}", end="", flush=True)
+        else:
+            print(Cursor.POS(px_screen_entry, py_screen_entry) +
+                  f"{COLORS.magenta}{maze.visual_wall}{COLORS.reset}",
+                  end="", flush=True)
+            print(Cursor.POS(px_screen_exit, py_screen_exit) +
+                  f"{COLORS.red}{maze.visual_wall}{COLORS.reset}",
+                  end="", flush=True)
 
     while True:
         old_x, old_y = player_pos[0], player_pos[1]
@@ -91,7 +184,10 @@ def play(maze: "MazeGenerator") -> None:
         if (new_x, new_y) != (old_x, old_y):
             if maze.maze[(new_x, new_y)] in (MAZE.wall, MAZE.fortytwo):
                 new_x, new_y = old_x, old_y
+                if gamemode == "fow":
+                    render_fow(old_x, old_y)
                 continue
+
             else:
                 maze.maze[(old_x, old_y)] = MAZE.empty
                 player_pos[0], player_pos[1] = new_x, new_y
@@ -119,8 +215,11 @@ def play(maze: "MazeGenerator") -> None:
                           f"{maze.visual_empty}{COLORS.reset}", end="",
                           flush=True)
                     print(Cursor.POS(curs_new_x, curs_new_y) +
-                          f"{maze.visual_entry}{COLORS.reset}", end="",
-                          flush=True)
+                          f"{COLORS.magenta}{maze.visual_wall}{COLORS.reset}",
+                          end="", flush=True)
+
+                if gamemode == "fow":
+                    render_fow(old_x, old_y)
 
         if (new_x == maze.exit_x and new_y == maze.exit_y):
             print(Cursor.POS(1, maze.height + maze.y_offset + 3) +
