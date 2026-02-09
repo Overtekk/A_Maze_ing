@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 11:22:47 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 11:41:34 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -228,7 +228,7 @@ class MazeGenerator():
 
         path_number = solver.path_checker()
         if self.perfect is False and path_number == 1:
-            while path_number == 1:
+            while path_number == 1 or path_number:
                 x = random.randint(1, self.width - 2)
                 y = random.randint(1, self.height - 2)
                 if (self.maze[(x, y)] == MAZE.wall and
