@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 09:13:56 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 10:00:14 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -16,8 +16,6 @@ This module provides the `MazeGenerator` class which builds a maze
 representation and renders it to terminal or writes it to an output
 file. It coordinates display formatting, algorithm selection and
 seeded random generation.
-
-Google style docstrings are used for public members.
 """
 
 import random
@@ -233,10 +231,22 @@ class MazeGenerator():
             while path_number == 1:
                 x = random.randint(1, self.width - 2)
                 y = random.randint(1, self.height - 2)
-                if self.maze[(x, y)] == MAZE.empty:
-                    continue
-                self.break_wall(x, y, rendering)
+                if (self.maze[(x, y)] == MAZE.wall
+                and self._is_breakable(x, y)):
+                    self.break_wall(x, y, rendering)
                 path_number = solver.path_checker()
+        for ty in range(1, self.height - 1, 2):
+            for tx in range(1, self.height - 1, 2):
+                if self.maze[(tx, ty)] == MAZE.empty:
+                    if (self.maze[(tx, ty + 1)] == MAZE.empty and
+                        self.maze[(tx + 1, ty + 1)] == MAZE.empty and
+                        self.maze[(tx + 1, ty)] == MAZE.empty and
+                        self.maze[(tx + 1, ty - 1)] == MAZE.empty and
+                        self.maze[(tx, ty - 1)] == MAZE.empty and
+                        self.maze[(tx - 1, ty - 1)] == MAZE.empty and
+                        self.maze[(tx - 1, ty)] == MAZE.empty and
+                        self.maze[(tx - 1, ty + 1)] == MAZE.empty):
+                        self.maze[(tx, ty)] = MAZE.wall
 
         maze_output(self, solver.path)
 
@@ -350,6 +360,28 @@ class MazeGenerator():
                 print(f"{current_color}{symbol_to_print}{COLORS.reset}",
                       end="")
             print()
+            
+    def _is_breakable(self, x: int, y: int) -> bool:
+        """Checks if the wall at the given coordinates is breakable.
+
+        This method checks adjacent cells (up, down, left, right).
+        If at least one of them is a target (empty, entry, or exit),
+        the wall is considered breakable.
+
+        Args:
+            x (int): The x-coordinate of the wall to check.
+            y (int): The y-coordinate of the wall to check.
+
+        Returns:
+            bool: True if the wall can be broken, False otherwise.
+        """
+        targets =  (MAZE.empty, MAZE.entry, MAZE.exit)
+        if ((self.maze[(x + 1, y)] in targets or
+            self.maze[(x - 1, y)] in targets or
+            self.maze[(x, y + 1)] in targets or
+            self.maze[(x, y - 1)] in targets)):
+            return True
+        return False
 
     def _choose_algo(self, rendering: bool) -> None:
         """Dispatches the generation process to the selected algorithm.
