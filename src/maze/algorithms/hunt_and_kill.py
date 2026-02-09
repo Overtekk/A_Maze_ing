@@ -3,18 +3,24 @@
 #                                                      :::      ::::::::    #
 #  hunt_and_kill.py                                  :+:      :+:    :+:    #
 #                                                  +:+ +:+         +:+      #
-#  By: rruiz <rruiz@student.42.fr>               +#+  +:+       +#+         #
+#  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/31 10:55:56 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/06 15:11:19 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/09 09:31:55 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-"""Hunt-and-kill maze generation algorithm.
+"""Hunt-and-kill maze generation algorithm implementation.
 
-This module provides a non-recursive hunt-and-kill implementation
-which alternates between random walks (kill) and scanning (hunt)
-to find new starting points.
+This module provides a function to generate mazes using the Hunt-and-Kill
+algorithm. This method alternates between two phases:
+1.  Kill (Random Walk): Carves a random path until it hits a dead end
+    or an existing path.
+2.  Hunt (Scan): Scans the grid for an unvisited cell adjacent to
+    a visited one, connects it, and restarts the Kill phase from there.
+
+This implementation also handles the "imperfect" maze logic (creating loops)
+directly within the scanning phase if configured.
 """
 
 from random import choice, randrange
@@ -25,11 +31,17 @@ from maze.maze_customization import MAZE
 
 
 def hunt_and_kill(generator: Any, rendering: bool) -> None:
-    """Generate a maze using the hunt-and-kill strategy.
+    """Executes the Hunt-and-Kill algorithm on the provided generator.
+
+    The function modifies the `generator.maze` grid in-place. It respects
+    the reserved '42' pattern coordinates by checking
+    `generator.fourtytwo_coord` before carving walls.
 
     Args:
-        generator: The `MazeGenerator` instance to operate on.
-        rendering: Whether to render progress during generation.
+        generator: The `MazeGenerator` instance containing the grid state,
+                  dimensions, and configuration (perfect/imperfect).
+        rendering: If True, calls `generator.break_wall` with visualization
+                   enabled to animate the process in the terminal.
     """
     targets = (MAZE.wall, MAZE.entry, MAZE.exit)
     while True:

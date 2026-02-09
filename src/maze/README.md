@@ -31,6 +31,15 @@ from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGen
 - Generated walls around the maze to keep it simple.
 - Provides multiples display and algorithms.
 
+## 🗒️ Functions
+|MazeConfig|MazeGenerator|MazeSolver|MazeError|
+|:--------:|:-----------:|:--------|:--------:|
+|from_config_file(path): Validate config and return an MazeConfig object|maze_generator(rendering:bool (False default)): Generate the maze, solve it and render it|find_path(): Find the shortest path in your generated maze|MazeError: Base exception class for all maze-related errors|
+| |print_maze(): Print the maze on the terminal|path_checker(): Counts the total number of distinct paths from entry to exit|MazeConfigError: Exception raised for configuration and parameter errors|
+| | |print_maze_solver(): Render the maze with the solution|MazeGenerationError: Exception raised for runtime errors during maze generation|
+| |get_maze_parameters(): Print the maze parameters|print_path(): Animate the solution path over a printed maze|
+| | | |
+
 ---
 
 ## 🌚 Quick example
