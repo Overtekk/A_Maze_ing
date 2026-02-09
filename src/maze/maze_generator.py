@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 11:14:16 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 11:22:47 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -236,7 +236,7 @@ class MazeGenerator():
                     self.break_wall(x, y, rendering)
                 path_number = solver.path_checker()
         for ty in range(1, self.height - 1, 1):
-            for tx in range(1, self.height - 1, 1):
+            for tx in range(1, self.width - 1, 1):
                 if self.maze[(tx, ty)] == MAZE.empty:
                     if (self.maze[(tx, ty + 1)] == MAZE.empty and
                         self.maze[(tx + 1, ty + 1)] == MAZE.empty and
