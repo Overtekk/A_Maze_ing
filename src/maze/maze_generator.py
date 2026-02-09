@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 11:41:34 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 12:08:55 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -225,6 +225,15 @@ class MazeGenerator():
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
+
+        start_x, start_y = self.entry_coord
+        if start_x == self.width // 2 and self.height // 2 - 1 <= start_y <= self.height // 2 + 1:
+            if self.maze[(start_x, start_y - 2)] == MAZE.empty:
+                self.break_wall(start_x, start_y - 1, rendering)
+                self.break_wall(start_x, start_y - 2, rendering)
+            elif self.maze[(start_x, start_y + 2)] == MAZE.empty:
+                self.break_wall(start_x, start_y + 1, rendering)
+                self.break_wall(start_x, start_y + 2, rendering)
 
         path_number = solver.path_checker()
         if self.perfect is False and path_number == 1:
