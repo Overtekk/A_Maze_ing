@@ -6,16 +6,16 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/08 22:21:25 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 09:36:55 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
-"""Interactive maze game launcher.
+"""Interactive maze game launcher and controller.
 
-This script serves as the entry point for the "play" mode of the application.
-It initializes a maze based on a configuration file, generates the layout, and
-enters an interactive loop where the user can navigate the maze using keyboard
-controls.
+This module serves as the entry point for the "play" mode. It initializes
+the game environment based on a configuration file, prompts the user to
+select a play mode (Normal or Fog of War), and enters the main interactive loop
+where keyboard inputs control the character.
 """
 
 import sys
@@ -33,12 +33,14 @@ CURSOR_SHOW = "\033[?25h"
 
 
 def launch_game() -> None:
-    """Initialize the environment and start the game session.
+    """Initializes the game environment and selects the game mode.
 
-    This function attempts to load the maze configuration and generate a new
-    maze. If successful, it passes the generated maze to the game loop.
-    Initialization errors (missing file, invalid config) are caught and
-    printed to stderr.
+    Attempts to load the configuration from 'play/config.txt'. If successful,
+    it prompts the user to choose between 'Normal' and 'Fog of War' modes,
+    generates the maze accordingly, and passes control to the `play` loop.
+
+    Catches and logs configuration or generation errors to stderr to ensure
+    a clean exit on failure.
     """
     try:
         maze_configuration = MazeConfig.from_config_file("play/config.txt")
@@ -83,16 +85,17 @@ def launch_game() -> None:
 
 
 def play(maze: "MazeGenerator", gamemode: str) -> None:
-    """Run the main interactive game loop.
+    """Executes the main interactive game loop.
 
-    Listens for user input via keyboard to move the player character through
-    the maze. It handles collision detection with walls, updates the player's
-    position, tracks the move steps, and refreshes the display until the exit
-    is reached or the user quits.
+    Captures keyboard input (WASD) to move the player, performs collision
+    detection against walls and obstacles, and updates the terminal display.
 
     Args:
-        maze: The `MazeGenerator` instance containing the grid and logic to be
-              played.
+        maze: The `MazeGenerator` instance containing the grid and
+              logic to be played.
+        gamemode: A string indicating the active mode ("normal" or "fow").
+                  If "fow" (Fog of War) is selected, only the surrounding of
+                  the player is rendered as he walk throught.
     """
     print(CURSOR_HIDE, end="", flush=True)
     player_pos = [maze.entry_x, maze.entry_y]
@@ -107,6 +110,7 @@ def play(maze: "MazeGenerator", gamemode: str) -> None:
     display_text(maze, steps)
 
     def render_fow(pos_x: int, pos_y: int) -> None:
+        """Renders the visible area around the player (Fog of War)."""
         for dir_x, dir_y in obs_to_render:
             x, y = (pos_x + dir_x), (pos_y + dir_y)
 

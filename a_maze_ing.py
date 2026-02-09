@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/08 21:12:49 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 09:14:43 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -15,7 +15,8 @@
 This script validates runtime dependencies, parses a simple
 `config.txt` format via `MazeConfig.from_config_file`, constructs a
 `MazeGenerator` and provides an interactive terminal UI to regenerate
-mazes, change colors and toggle algorithms.
+mazes, show a path between entry to exit, change colors of walls, choose which
+algorithm to use, show the seed used and quit.
 """
 
 import sys
@@ -33,8 +34,15 @@ if TYPE_CHECKING:
 def main() -> int:
     """Main program entry point.
 
+    This function performs module checks, loads the configuration from
+    'config.txt', initializes the generator, and runs the interactive
+    menu loop. It catches known exceptions to exit gracefully.
+
     Returns:
-        int: Process return code (0 for success, non-zero on error).
+        int: The process exit code.
+            * 0: Successful execution.
+            * 1: Unexpected runtime errors.
+            * 2: Dependency errors, configuration errors, or invalid arguments.
     """
     try:
         try:
@@ -72,10 +80,6 @@ def main() -> int:
                 algo = "hunt and kill"
 
             # print(generator.get_maze_parameters())
-
-            if (len(generator.fourtytwo_coord) <= 0):
-                print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can't be"
-                      f" printed!{STYLE.reset}")
 
             print(f"\n{COLORS.magenta}=== {STYLE.bright}{COLORS.red}A-"
                   f"{COLORS.blue}Maze-{COLORS.green}ing {COLORS.reset}"
@@ -200,7 +204,7 @@ def main() -> int:
                 break
 
     except (MazeConfigError, MazeGenerationError, FileNotFoundError,
-            ValueError) as e:
+            ValueError, ArgumentsError) as e:
 
         print(f"{type(e).__name__}: {e}", file=sys.stderr)
         return 2
@@ -214,13 +218,16 @@ def main() -> int:
 
 
 def display_text(maze: "MazeGenerator") -> None:
-    """Print small summary text above the rendered maze.
+    """Prints formatted summary text above the rendered maze.
 
-    The function chooses a centered title string and a brief line
-    describing the current algorithm and display mode.
+    Calculates the necessary padding to center the title and status lines
+    based on the maze's visual width. Displays the current generation status
+    and the active algorithm.
 
     Args:
-        maze: The `MazeGenerator` used to derive display properties.
+        maze (MazeGenerator): The generator instance containing the current
+            state, dimensions, algorithm, and display settings used for
+            formatting the output.
     """
 
     from maze.maze_customization import (STYLE, ALGO_MODE, DISPLAY_MODE)
