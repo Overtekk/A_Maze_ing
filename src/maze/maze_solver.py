@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 08:44:53 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 11:49:28 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -100,21 +100,44 @@ class MazeSolver():
                     visited.append(neighbour)
 
     def path_checker(self) -> int:
-        """Counts the total number of distinct paths from entry to exit.
+        """Determines the number of valid paths from entry to exit.
 
-        Uses a recursive Depth-First Search (DFS) with backtracking to
-        explore all possible valid routes through the maze.
+        This method uses a recursive Depth-First Search (DFS) with backtracking
+        to explore possible routes. It includes an optimization to stop the
+        search immediately once more than one path is found, as its primary
+        purpose is to distinguish between a perfect maze (unique path) and an
+        imperfect one.
 
         Returns:
-            int: The total count of unique paths found.
+            int: The number of paths found. Returns 0 if unsolvable, 1 if
+                 unique, and caps at 2 if multiple paths exist.
         """
         number_of_paths = 0
 
-        def explore_recursive(x: int, y: int, visited: set[Any]) -> None:
+        def explore_recursive(x: int, y: int, visited: set[Any]) -> bool:
+            """Recursively explores the maze to find valid paths to the exit.
+
+            This inner function performs a Depth-First Search (DFS) from
+            the given coordinates. It updates the nonlocal `number_of_paths`
+            counter when the exit is reached.
+
+            Args:
+                x: Current x-coordinate.
+                y: Current y-coordinate.
+                visited: A set of coordinates already visited in the current
+                         recursion stack to prevent cycles.
+
+            Returns:
+                bool: True if the search should be aborted (i.e., more than one
+                      path has been found), False otherwise.
+            """
             nonlocal number_of_paths
+            if number_of_paths > 1:
+                return True
+
             if (x, y) == (self.maze.exit_x, self.maze.exit_y):
                 number_of_paths += 1
-                return
+                return number_of_paths > 1
 
             directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
@@ -130,8 +153,10 @@ class MazeSolver():
                         (MAZE.empty, MAZE.exit)):
 
                     visited.add(neighbor)
-                    explore_recursive(neighbor_x, neighbor_y, visited)
+                    if explore_recursive(neighbor_x, neighbor_y, visited):
+                        return True
                     visited.remove(neighbor)
+            return False
 
         visited = {(self.maze.entry_x, self.maze.entry_y)}
         explore_recursive(self.maze.entry_x, self.maze.entry_y, visited)

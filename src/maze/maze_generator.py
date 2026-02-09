@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 10:22:15 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/09 12:08:55 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -226,17 +226,26 @@ class MazeGenerator():
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
 
+        start_x, start_y = self.entry_coord
+        if start_x == self.width // 2 and self.height // 2 - 1 <= start_y <= self.height // 2 + 1:
+            if self.maze[(start_x, start_y - 2)] == MAZE.empty:
+                self.break_wall(start_x, start_y - 1, rendering)
+                self.break_wall(start_x, start_y - 2, rendering)
+            elif self.maze[(start_x, start_y + 2)] == MAZE.empty:
+                self.break_wall(start_x, start_y + 1, rendering)
+                self.break_wall(start_x, start_y + 2, rendering)
+
         path_number = solver.path_checker()
         if self.perfect is False and path_number == 1:
-            while path_number == 1:
+            while path_number == 1 or path_number:
                 x = random.randint(1, self.width - 2)
                 y = random.randint(1, self.height - 2)
-                if (self.maze[(x, y)] == MAZE.wall
-                and self._is_breakable(x, y)):
+                if (self.maze[(x, y)] == MAZE.wall and
+                        self._is_breakable(x, y)):
                     self.break_wall(x, y, rendering)
                 path_number = solver.path_checker()
         for ty in range(1, self.height - 1, 1):
-            for tx in range(1, self.height - 1, 1):
+            for tx in range(1, self.width - 1, 1):
                 if self.maze[(tx, ty)] == MAZE.empty:
                     if (self.maze[(tx, ty + 1)] == MAZE.empty and
                         self.maze[(tx + 1, ty + 1)] == MAZE.empty and
@@ -245,7 +254,7 @@ class MazeGenerator():
                         self.maze[(tx, ty - 1)] == MAZE.empty and
                         self.maze[(tx - 1, ty - 1)] == MAZE.empty and
                         self.maze[(tx - 1, ty)] == MAZE.empty and
-                        self.maze[(tx - 1, ty + 1)] == MAZE.empty):
+                            self.maze[(tx - 1, ty + 1)] == MAZE.empty):
                         self.maze[(tx, ty)] = MAZE.wall
 
         maze_output(self, solver.path)
@@ -258,28 +267,6 @@ class MazeGenerator():
                 print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can't be"
                       f" printed!{STYLE.reset}")
             print(Cursor.POS(1, self.height + self.y_offset))
-
-    def _is_breakable(self, x: int, y: int) -> bool:
-        """Checks if the wall at the given coordinates is breakable.
-
-        This method checks adjacent cells (up, down, left, right).
-        If at least one of them is a target (empty, entry, or exit),
-        the wall is considered breakable.
-
-        Args:
-            x (int): The x-coordinate of the wall to check.
-            y (int): The y-coordinate of the wall to check.
-
-        Returns:
-            bool: True if the wall can be broken, False otherwise.
-        """
-        targets =  (MAZE.empty, MAZE.entry, MAZE.exit)
-        if ((self.maze[(x + 1, y)] in targets or
-            self.maze[(x - 1, y)] in targets or
-            self.maze[(x, y + 1)] in targets or
-            self.maze[(x, y - 1)] in targets)):
-            return True
-        return False
 
     def get_maze_parameters(self) -> Dict[str, Any]:
         """Retrieves the current configuration state of the generator.
@@ -383,6 +370,28 @@ class MazeGenerator():
                       end="")
             print()
 
+    def _is_breakable(self, x: int, y: int) -> bool:
+        """Checks if the wall at the given coordinates is breakable.
+
+        This method checks adjacent cells (up, down, left, right).
+        If at least one of them is a target (empty, entry, or exit),
+        the wall is considered breakable.
+
+        Args:
+            x (int): The x-coordinate of the wall to check.
+            y (int): The y-coordinate of the wall to check.
+
+        Returns:
+            bool: True if the wall can be broken, False otherwise.
+        """
+        targets = (MAZE.empty, MAZE.entry, MAZE.exit)
+        if ((self.maze[(x + 1, y)] in targets or
+            self.maze[(x - 1, y)] in targets or
+            self.maze[(x, y + 1)] in targets or
+                self.maze[(x, y - 1)] in targets)):
+            return True
+        return False
+
     def _choose_algo(self, rendering: bool) -> None:
         """Dispatches the generation process to the selected algorithm.
 
@@ -428,20 +437,45 @@ class MazeGenerator():
                 self.width += 1
             if self.height % 2 == 0:
                 self.height += 1
+
+            ft_pattern = ft_patt(self.width, self.height)
+
             if self.exit_coord[0] % 2 == 0:
-                if random.choice([True, False]):
-                    self.exit_coord = (self.exit_coord[0] + 1,
-                                       self.exit_coord[1])
-                else:
+                if (self.exit_coord[0] + 1 >= self.width - 1 or
+                    (self.exit_coord[0] + 1, self.exit_coord[1]) in
+                        ft_pattern):
                     self.exit_coord = (self.exit_coord[0] - 1,
                                        self.exit_coord[1])
-            if self.exit_coord[1] % 2 == 0:
-                if random.choice([True, False]):
-                    self.exit_coord = (self.exit_coord[0],
-                                       self.exit_coord[1] + 1)
                 else:
+                    if ((self.exit_coord[0] - 1, self.exit_coord[1]) in
+                            ft_pattern):
+                        self.exit_coord = (self.exit_coord[0] + 1,
+                                           self.exit_coord[1])
+                    else:
+                        if ((self.exit_coord[0], self.exit_coord[1] - 1) in
+                                ft_pattern):
+                            self.exit_coord = (self.exit_coord[0],
+                                               self.exit_coord[1] + 1)
+                        else:
+                            if random.choice([True, False]):
+                                self.exit_coord = (self.exit_coord[0] + 1,
+                                                   self.exit_coord[1])
+                            else:
+                                self.exit_coord = (self.exit_coord[0] - 1,
+                                                   self.exit_coord[1])
+            if self.exit_coord[1] % 2 == 0:
+                if (self.exit_coord[1] + 1 >= self.width - 1 or
+                    (self.exit_coord[1] + 1, self.exit_coord[1]) in
+                        ft_pattern):
                     self.exit_coord = (self.exit_coord[0],
                                        self.exit_coord[1] - 1)
+                else:
+                    if random.choice([True, False]):
+                        self.exit_coord = (self.exit_coord[0],
+                                           self.exit_coord[1] + 1)
+                    else:
+                        self.exit_coord = (self.exit_coord[0],
+                                           self.exit_coord[1] - 1)
 
         if self.exit_coord[0] >= self.width - 1:
             self.exit_coord = (self.width - 2, self.exit_coord[1])
