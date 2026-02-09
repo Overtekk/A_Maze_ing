@@ -395,9 +395,10 @@ Our team was good. Nothing can be improved apart from our coding skill.
 
 ## 📂 Specific tools:
 
-We use 2 differents libraries:
+We use 3 differents libraries:
 - `pydantic` to check if the config is correct.
 - `colorama` to print the maze on the terminal and add colors and style in the text.
+- 'readchar' to allow moving the player in 'Play Mode'.
 
 ---
 
