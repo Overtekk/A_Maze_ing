@@ -257,11 +257,12 @@ from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGen
 ```python
 #!/usr/bin/env python3
 
+import sys
 from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGenerationError
 
 # Generate the config object with custom parameters.
 try:
-	config = MazeConfig(width=50, height=50, entry=(0,0), exit=(18,12), output_file="maze.txt", perfect=False, display="emoji", algorithm="rb")
+	config = MazeConfig(width=21, height=21, entry=(0,0), exit=(18,12), output_file="maze.txt", perfect=False, display="emoji", algorithm="rb")
 
 	# Instanciate a new maze.
 	generator = MazeGenerator(config)
