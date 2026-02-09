@@ -438,12 +438,22 @@ class MazeGenerator():
                     self.exit_coord = (self.exit_coord[0] - 1,
                                        self.exit_coord[1])
                 else:
-                    if random.choice([True, False]):
+                    if ((self.exit_coord[0] - 1, self.exit_coord[1]) in
+                            ft_pattern):
                         self.exit_coord = (self.exit_coord[0] + 1,
                                            self.exit_coord[1])
                     else:
-                        self.exit_coord = (self.exit_coord[0] - 1,
-                                           self.exit_coord[1])
+                        if ((self.exit_coord[0], self.exit_coord[1] - 1) in
+                                ft_pattern):
+                            self.exit_coord = (self.exit_coord[0],
+                                               self.exit_coord[1] + 1)
+                        else:
+                            if random.choice([True, False]):
+                                self.exit_coord = (self.exit_coord[0] + 1,
+                                                   self.exit_coord[1])
+                            else:
+                                self.exit_coord = (self.exit_coord[0] - 1,
+                                                   self.exit_coord[1])
             if self.exit_coord[1] % 2 == 0:
                 if (self.exit_coord[1] + 1 >= self.width - 1 or
                     (self.exit_coord[1] + 1, self.exit_coord[1]) in
