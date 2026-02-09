@@ -1,9 +1,9 @@
 WIDTH=30
 HEIGHT=36
-ENTRY=20,5
+ENTRY=12,0
 EXIT=1,35
 OUTPUT_FILE=play/maze.txt
 PERFECT=False
-SEED=koala
+# SEED=koala
 DISPLAY=emoji
 ALGORITHM=rb

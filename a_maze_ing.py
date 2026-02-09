@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/20 16:25:20 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/07 13:48:41 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 09:31:21 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -72,6 +72,8 @@ def main() -> int:
                 algo = "hunt and kill"
 
             # print(generator.get_maze_parameters())
+
+            print(f"nombre de path: {MazeSolver(generator).path_checker()}")
 
             if (len(generator.fourtytwo_coord) <= 0):
                 print(f"{COLORS.red}{STYLE.bright}ERROR: '42' pattern can't be"
