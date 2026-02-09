@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 12:08:55 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/09 15:39:38 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -226,18 +226,19 @@ class MazeGenerator():
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
 
-        start_x, start_y = self.entry_coord
-        if start_x == self.width // 2 and self.height // 2 - 1 <= start_y <= self.height // 2 + 1:
-            if self.maze[(start_x, start_y - 2)] == MAZE.empty:
-                self.break_wall(start_x, start_y - 1, rendering)
-                self.break_wall(start_x, start_y - 2, rendering)
-            elif self.maze[(start_x, start_y + 2)] == MAZE.empty:
-                self.break_wall(start_x, start_y + 1, rendering)
-                self.break_wall(start_x, start_y + 2, rendering)
+        # start_x, start_y = self.entry_coord
+        # if (start_x == self.width // 2 and
+        #     self.height // 2 - 1 <= start_y <= self.height // 2 + 1):
+        #     if self.maze[(start_x, start_y - 2)] == MAZE.empty:
+        #         self.break_wall(start_x, start_y - 1, rendering)
+        #         self.break_wall(start_x, start_y - 2, rendering)
+        #     elif self.maze[(start_x, start_y + 2)] == MAZE.empty:
+        #         self.break_wall(start_x, start_y + 1, rendering)
+        #         self.break_wall(start_x, start_y + 2, rendering)
 
         path_number = solver.path_checker()
         if self.perfect is False and path_number == 1:
-            while path_number == 1 or path_number:
+            while path_number == 1:
                 x = random.randint(1, self.width - 2)
                 y = random.randint(1, self.height - 2)
                 if (self.maze[(x, y)] == MAZE.wall and
