@@ -259,28 +259,6 @@ class MazeGenerator():
                       f" printed!{STYLE.reset}")
             print(Cursor.POS(1, self.height + self.y_offset))
 
-    def _is_breakable(self, x: int, y: int) -> bool:
-        """Checks if the wall at the given coordinates is breakable.
-
-        This method checks adjacent cells (up, down, left, right).
-        If at least one of them is a target (empty, entry, or exit),
-        the wall is considered breakable.
-
-        Args:
-            x (int): The x-coordinate of the wall to check.
-            y (int): The y-coordinate of the wall to check.
-
-        Returns:
-            bool: True if the wall can be broken, False otherwise.
-        """
-        targets =  (MAZE.empty, MAZE.entry, MAZE.exit)
-        if ((self.maze[(x + 1, y)] in targets or
-            self.maze[(x - 1, y)] in targets or
-            self.maze[(x, y + 1)] in targets or
-            self.maze[(x, y - 1)] in targets)):
-            return True
-        return False
-
     def get_maze_parameters(self) -> Dict[str, Any]:
         """Retrieves the current configuration state of the generator.
 
@@ -382,6 +360,28 @@ class MazeGenerator():
                 print(f"{current_color}{symbol_to_print}{COLORS.reset}",
                       end="")
             print()
+            
+    def _is_breakable(self, x: int, y: int) -> bool:
+        """Checks if the wall at the given coordinates is breakable.
+
+        This method checks adjacent cells (up, down, left, right).
+        If at least one of them is a target (empty, entry, or exit),
+        the wall is considered breakable.
+
+        Args:
+            x (int): The x-coordinate of the wall to check.
+            y (int): The y-coordinate of the wall to check.
+
+        Returns:
+            bool: True if the wall can be broken, False otherwise.
+        """
+        targets =  (MAZE.empty, MAZE.entry, MAZE.exit)
+        if ((self.maze[(x + 1, y)] in targets or
+            self.maze[(x - 1, y)] in targets or
+            self.maze[(x, y + 1)] in targets or
+            self.maze[(x, y - 1)] in targets)):
+            return True
+        return False
 
     def _choose_algo(self, rendering: bool) -> None:
         """Dispatches the generation process to the selected algorithm.
