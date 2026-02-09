@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 09:27:15 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 10:16:54 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -245,7 +245,6 @@ class MazeConfig(BaseModel):
                 if error['type'] == "string_pattern_mismatch":
                     msg = "File must end with '.txt'"
                 elif error['type'] == "greater_than_equal":
-                    msg = ("Too small (can't put 42 pattern). Must be at "
-                           f"least {error['ctx']['ge']}")
+                    msg = (f"Too small. Must be at least {error['ctx']['ge']}")
                 error_message = f"{error['loc'][0]}: {msg}"
             raise MazeConfigError(error_message)
