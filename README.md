@@ -178,6 +178,10 @@ Using `make play` you can launch the **play mode**. It will generate a maze so t
 It works by using the `readchar` library the checking what key have been pressed. Then, if it can move, it change the entry/player position and print the maze.\
 There is also a `count` number to try to solve the maze with the fewest possible steps.
 
+2 modes are available:
+- **Normal mode**: Starting from the entry point (magenta), find your way throught the maze and go to the exit (red).
+- **Fog of war**: Starting from the entry point (magenta), find your way throught the maze that is rendered over as you go throught it.
+
 The rule `make play` will auto-install the library in the virtual environment if it not already installed.
 
 <div align="center">
@@ -224,6 +228,15 @@ from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGen
 - MazeSolver — class to check if a maze is solvable.
 - MazeConfigError — custom error inherited from MazeError, and Exception to catch config error.
 - MazeGenerationError — custom error inherited from MazeError, and Exception to catch generation error.
+
+## 🗒️ Functions
+|MazeConfig|MazeGenerator|MazeSolver|MazeError|
+|:--------:|:-----------:|:--------|:--------:|
+|from_config_file(path): Validate config and return an MazeConfig object|maze_generator(rendering:bool (False default)): Generate the maze, solve it and render it|find_path(): Find the shortest path in your generated maze|MazeError: Base exception class for all maze-related errors|
+| |print_maze(): Print the maze on the terminal|path_checker(): Counts the total number of distinct paths from entry to exit|MazeConfigError: Exception raised for configuration and parameter errors|
+| | |print_maze_solver(): Render the maze with the solution|MazeGenerationError: Exception raised for runtime errors during maze generation|
+| |get_maze_parameters(): Print the maze parameters|print_path(): Animate the solution path over a printed maze|
+| | | |
 
 ---
 
@@ -426,6 +439,6 @@ We use 2 differents libraries:
 
 #### <u>AI Usage</u>:
 
-AI was use to better understanding certain things in Python. And help us on some maths aspect. Also, help use optimize more part of code (because Python can be easy but also be very unclear at some part).
+AI was use to better understanding certain things in Python. And help us on some maths aspect. Also, help use optimize more part of code (because Python can be easy but also be very unclear at some part). Finally, used to help us create clear and comprehensive docstrings.
 
 ---
