@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 10:07:09 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 10:41:35 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -428,20 +428,35 @@ class MazeGenerator():
                 self.width += 1
             if self.height % 2 == 0:
                 self.height += 1
+
+            ft_pattern = ft_patt(self.width, self.height)
+
             if self.exit_coord[0] % 2 == 0:
-                if random.choice([True, False]):
-                    self.exit_coord = (self.exit_coord[0] + 1,
-                                       self.exit_coord[1])
-                else:
+                if (self.exit_coord[0] + 1 >= self.width - 1 or
+                    (self.exit_coord[0] + 1, self.exit_coord[1]) in
+                        ft_pattern):
                     self.exit_coord = (self.exit_coord[0] - 1,
                                        self.exit_coord[1])
-            if self.exit_coord[1] % 2 == 0:
-                if random.choice([True, False]):
-                    self.exit_coord = (self.exit_coord[0],
-                                       self.exit_coord[1] + 1)
                 else:
+                    if random.choice([True, False]):
+                        self.exit_coord = (self.exit_coord[0] + 1,
+                                           self.exit_coord[1])
+                    else:
+                        self.exit_coord = (self.exit_coord[0] - 1,
+                                           self.exit_coord[1])
+            if self.exit_coord[1] % 2 == 0:
+                if (self.exit_coord[1] + 1 >= self.width - 1 or
+                    (self.exit_coord[1] + 1, self.exit_coord[1]) in
+                        ft_pattern):
                     self.exit_coord = (self.exit_coord[0],
                                        self.exit_coord[1] - 1)
+                else:
+                    if random.choice([True, False]):
+                        self.exit_coord = (self.exit_coord[0],
+                                           self.exit_coord[1] + 1)
+                    else:
+                        self.exit_coord = (self.exit_coord[0],
+                                           self.exit_coord[1] - 1)
 
         if self.exit_coord[0] >= self.width - 1:
             self.exit_coord = (self.width - 2, self.exit_coord[1])
