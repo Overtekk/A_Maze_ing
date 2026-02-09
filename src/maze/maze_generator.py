@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 10:00:14 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/09 10:07:09 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -231,8 +231,8 @@ class MazeGenerator():
             while path_number == 1:
                 x = random.randint(1, self.width - 2)
                 y = random.randint(1, self.height - 2)
-                if (self.maze[(x, y)] == MAZE.wall
-                and self._is_breakable(x, y)):
+                if (self.maze[(x, y)] == MAZE.wall and
+                        self._is_breakable(x, y)):
                     self.break_wall(x, y, rendering)
                 path_number = solver.path_checker()
         for ty in range(1, self.height - 1, 2):
@@ -245,7 +245,7 @@ class MazeGenerator():
                         self.maze[(tx, ty - 1)] == MAZE.empty and
                         self.maze[(tx - 1, ty - 1)] == MAZE.empty and
                         self.maze[(tx - 1, ty)] == MAZE.empty and
-                        self.maze[(tx - 1, ty + 1)] == MAZE.empty):
+                            self.maze[(tx - 1, ty + 1)] == MAZE.empty):
                         self.maze[(tx, ty)] = MAZE.wall
 
         maze_output(self, solver.path)
@@ -360,7 +360,7 @@ class MazeGenerator():
                 print(f"{current_color}{symbol_to_print}{COLORS.reset}",
                       end="")
             print()
-            
+
     def _is_breakable(self, x: int, y: int) -> bool:
         """Checks if the wall at the given coordinates is breakable.
 
@@ -375,11 +375,11 @@ class MazeGenerator():
         Returns:
             bool: True if the wall can be broken, False otherwise.
         """
-        targets =  (MAZE.empty, MAZE.entry, MAZE.exit)
+        targets = (MAZE.empty, MAZE.entry, MAZE.exit)
         if ((self.maze[(x + 1, y)] in targets or
             self.maze[(x - 1, y)] in targets or
             self.maze[(x, y + 1)] in targets or
-            self.maze[(x, y - 1)] in targets)):
+                self.maze[(x, y - 1)] in targets)):
             return True
         return False
 
