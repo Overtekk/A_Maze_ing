@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 09:36:55 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 15:17:49 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -244,9 +244,9 @@ def display_text(maze: "MazeGenerator", steps: int) -> None:
         steps: The current number of steps taken by the player.
     """
     if steps > 0:
-        text_infos = f"Quit: 'E' | Steps: {steps}"
+        text_infos = f"Move: 'WASD', Quit: 'E' | Steps: {steps}"
     else:
-        text_infos = f"Quit: 'E' | Step: {steps}"
+        text_infos = f"Move: 'WASD', Quit: 'E' | Step: {steps}"
     line_y = maze.height + maze.y_offset + 1
 
     visual_width = maze.width // 2

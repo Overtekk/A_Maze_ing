@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 11:49:28 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/09 15:50:08 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -114,7 +114,8 @@ class MazeSolver():
         """
         number_of_paths = 0
 
-        def explore_recursive(x: int, y: int, visited: set[Any]) -> bool:
+        def explore_recursive(x: int, y: int,
+                              visited: set[Any]) -> bool | None:
             """Recursively explores the maze to find valid paths to the exit.
 
             This inner function performs a Depth-First Search (DFS) from
@@ -154,7 +155,7 @@ class MazeSolver():
 
                     visited.add(neighbor)
                     if explore_recursive(neighbor_x, neighbor_y, visited):
-                        return True
+                        return None
                     visited.remove(neighbor)
             return False
 
