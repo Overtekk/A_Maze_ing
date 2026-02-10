@@ -1,14 +1,14 @@
 # Maze width (number of cells)
-WIDTH=12
+WIDTH=25
 
 # Maze height
-HEIGHT=12
+HEIGHT=25
 
 # Entry coordinates (x,y)
-ENTRY=1,1
+ENTRY=22,16
 
 # Exit coordinates (x,y)
-EXIT=5,5
+EXIT=18,6
 
 # Output filename
 OUTPUT_FILE=maze.txt
@@ -25,4 +25,4 @@ DISPLAY=emoji
 
 # Algorithm to use (Optional)
 # Valid = "rb"(recursive backtracking(DEFAULT)) | "huntandkill"
-ALGORITHM=huntandkill
+ALGORITHM=rb

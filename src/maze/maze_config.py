@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/27 14:14:51 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 10:16:54 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/10 14:55:54 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -184,6 +184,13 @@ class MazeConfig(BaseModel):
             raise MazeConfigError("Can't place Entry here. Reserved to '42'")
         if self.exit in forty_two_coords:
             raise MazeConfigError("Can't place Exit here. Reserved to '42'")
+
+        neighbor_entry = [(self.entry[0] + 1, self.entry[1]),
+                          (self.entry[0], self.entry[1] - 1),
+                          (self.entry[0] - 1, self.entry[1]),
+                          (self.entry[0], self.entry[1] + 1)]
+        if self.exit in neighbor_entry:
+            raise MazeConfigError("Entry and Exit cannot be side by side.")
 
         return self
 
