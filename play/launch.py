@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 15:17:49 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/10 13:16:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -27,6 +27,7 @@ from colorama import Cursor
 from maze import (MazeConfig, MazeGenerator, MazeConfigError,
                   MazeGenerationError)
 from maze.maze_customization import (MAZE, STYLE, COLORS, ANIM, DISPLAY_MODE)
+from enemy import Enemy
 
 CURSOR_HIDE = "\033[?25l"
 CURSOR_SHOW = "\033[?25h"
@@ -49,14 +50,15 @@ def launch_game() -> None:
 
         print(f"{COLORS.magenta}{STYLE.bright}\nChoose gamemode:")
         print(f"{COLORS.lightcyan}1. Normal")
-        print(f"{COLORS.lightcyan}2. Fog of war{STYLE.reset}")
+        print(f"{COLORS.lightcyan}2. Fog of war")
+        print(f"{COLORS.lightcyan}3. Hunted{STYLE.reset}")
 
         while True:
-            user_choice = input(f"{COLORS.lightgreen}Choice (1-2): "
+            user_choice = input(f"{COLORS.lightgreen}Choice (1-3): "
                                 f"{COLORS.reset}")
             try:
                 choice = int(user_choice)
-                if 1 <= choice <= 2:
+                if 1 <= choice <= 3:
                     break
                 else:
                     raise ValueError
@@ -70,12 +72,18 @@ def launch_game() -> None:
             print(f"{COLORS.green}✅ Launching 'normal play mode'\n")
             sleep(1)
             maze.maze_generator(rendering=True)
-        else:
+        elif choice == 2:
             gamemode = "fow"
             print(f"{COLORS.green}✅ Launching 'fog of war play mode'\n")
             sleep(1)
             print(ANIM.clear_screen, end="")
             maze.maze_generator(rendering=False)
+        else:
+            gamemode = "enemy"
+            print(f"{COLORS.green}✅ Launching 'hunted play mode'\n")
+            sleep(1)
+            print(ANIM.clear_screen, end="")
+            maze.maze_generator(rendering=True)
 
     except (FileNotFoundError, ValueError, MazeConfigError,
             MazeGenerationError) as e:
@@ -106,6 +114,13 @@ def play(maze: "MazeGenerator", gamemode: str) -> None:
                     (-2, 0),  (-1, 0), (1, 0),  (2, 0),
                     (-2, 1),  (-1, 1),  (0, 1),  (1, 1),  (2, 1)
                     ]
+
+    if gamemode == "enemy":
+        enemy = Enemy(maze)
+        enemy.spawn()
+        print(Cursor.POS((enemy.enemy_x * maze.step_x) + 1,
+              enemy.enemy_y + maze.y_offset) + f"{enemy.display_enemy}",
+              end="", flush=True)
 
     display_text(maze, steps)
 
@@ -224,6 +239,40 @@ def play(maze: "MazeGenerator", gamemode: str) -> None:
 
                 if gamemode == "fow":
                     render_fow(old_x, old_y)
+
+                if gamemode == "enemy":
+                    if maze.maze[(enemy.enemy_x, enemy.enemy_y)] == MAZE.exit:
+                        old_enemy_x = enemy.enemy_x
+                        old_enemy_y = enemy.enemy_y
+                        if maze.display in (DISPLAY_MODE.ascii,
+                                            DISPLAY_MODE.simple):
+                            print(Cursor.POS((old_enemy_x * maze.step_x) + 1,
+                                  old_enemy_y + maze.y_offset) +
+                                  f"{maze.visual_exit}{COLORS.reset}", end="",
+                                  flush=True)
+                        else:
+                            print(Cursor.POS((old_enemy_x * maze.step_x) + 1,
+                                  old_enemy_y + maze.y_offset) +
+                                  f"{COLORS.red}{maze.visual_wall}"
+                                  f"{COLORS.reset}", end="", flush=True)
+                    else:
+                        print(Cursor.POS((enemy.enemy_x * maze.step_x) + 1,
+                              enemy.enemy_y + maze.y_offset) +
+                              f"{maze.visual_empty}{COLORS.reset}",
+                              end="", flush=True)
+
+                    enemy.move(new_x, new_y)
+
+                    print(Cursor.POS((enemy.enemy_x * maze.step_x) + 1,
+                          enemy.enemy_y + maze.y_offset) +
+                          f"{enemy.display_enemy}", end="", flush=True)
+
+        if gamemode == "enemy":
+            if (new_x == enemy.enemy_x and new_y == enemy.enemy_y):
+                print(Cursor.POS(1, maze.height + maze.y_offset + 3) +
+                      f"{COLORS.red}Fail! The dino ate you.{COLORS.reset}")
+                print(CURSOR_SHOW, end="", flush=True)
+                break
 
         if (new_x == maze.exit_x and new_y == maze.exit_y):
             print(Cursor.POS(1, maze.height + maze.y_offset + 3) +
