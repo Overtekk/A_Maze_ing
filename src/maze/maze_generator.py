@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/10 15:12:08 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/10 15:28:22 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -397,12 +397,12 @@ class MazeGenerator():
     def _correcting_coords(self) -> None:
         """Adjusts dimensions and coordinates to satisfy algorithm constraints.
 
-        Many maze generation algorithms (like Recursive Backtracking) require
-        odd-numbered grid dimensions to function correctly (ensuring proper
-        wall placement between cells). This method:
-        1. Increments width/height if they are even.
-        2. Adjusts entry/exit coordinates to ensure they align with the
-           valid grid logic.
+        Ensures the grid dimensions are odd (required by algorithms like
+        Recursive Backtracking) by incrementing width/height if necessary.
+        It also:
+        - Adjusts entry/exit coordinates to align with the valid grid logic.
+        - Checks and shifts the exit position to prevent it from spawning
+          inside the reserved '42' pattern area.
         """
         if self.entry_coord[0] == 0:
             self.entry_coord = (self.entry_coord[0] + 1, self.entry_coord[1])

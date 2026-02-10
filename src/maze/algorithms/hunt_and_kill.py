@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/31 10:55:56 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/10 13:19:27 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/10 15:25:26 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -44,11 +44,6 @@ def hunt_and_kill(generator: Any, rendering: bool) -> None:
                    enabled to animate the process in the terminal.
     """
     targets = (MAZE.wall, MAZE.entry, MAZE.exit)
-    # while True:
-    #     x = randrange(1, generator.width, 2)
-    #     y = randrange(1, generator.height, 2)
-    #     if (x, y) not in generator.fourtytwo_coord:
-    #         break
     x, y = generator.entry_x, generator.entry_y
 
     if x % 2 == 0:
