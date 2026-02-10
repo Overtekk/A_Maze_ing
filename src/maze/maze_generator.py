@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/10 13:35:35 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/10 13:56:09 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -415,7 +415,7 @@ class MazeGenerator():
             self.height += 1
 
         if self.entry_coord[0] % 2 == 0:
-            if random.randint(0, 2) == 1:
+            if random.choice([True, False]):
                 self.entry_coord = (self.entry_coord[0] + 1, self.entry_coord[1])
                 self.exit_coord = (self.exit_coord[0] + 1, self.exit_coord[1])
             else:
@@ -423,7 +423,7 @@ class MazeGenerator():
                 self.exit_coord = (self.exit_coord[0] - 1, self.exit_coord[1])
 
         if self.entry_coord[1] % 2 == 0:
-            if random.randint(0, 2) == 1:
+            if random.choice([True, False]):
                 self.entry_coord = (self.entry_coord[0], self.entry_coord[1] + 1)
                 self.exit_coord = (self.exit_coord[0], self.exit_coord[1] + 1)
             else:
@@ -471,10 +471,16 @@ class MazeGenerator():
                     if random.choice([True, False]):
                         self.exit_coord = (self.exit_coord[0],
                                            self.exit_coord[1] + 1)
+                        if self.exit_coord == self.entry_coord:
+                                self.exit_coord = (self.exit_coord[0],
+                                                self.exit_coord[1] - 2)
                     else:
                         self.exit_coord = (self.exit_coord[0],
                                            self.exit_coord[1] - 1)
-
+                        if self.exit_coord == self.entry_coord:
+                                self.exit_coord = (self.exit_coord[0],
+                                                self.exit_coord[1] + 2)
+                
         if self.exit_coord[0] >= self.width - 1:
             self.exit_coord = (self.width - 2, self.exit_coord[1])
         if self.exit_coord[1] >= self.height - 1:
