@@ -6,9 +6,17 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/10 08:25:43 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/10 11:57:41 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/10 14:22:17 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
+
+"""Enemy controller for the 'Hunted' game mode.
+
+This module defines the `Enemy` class, which manages the behavior of the
+hostile entity within the maze. It handles the initialization, spawning
+mechanics (ensuring distance from the player), and pathfinding logic
+to chase the player using Breadth-First Search (BFS).
+"""
 
 from typing import Dict, Tuple
 
@@ -17,14 +25,36 @@ from maze.maze_customization import MAZE
 
 
 class Enemy():
+    """
+    Represents the hostile entity in the maze.
+    """
 
     def __init__(self, maze: MazeGenerator) -> None:
+        """Initializes the enemy with a reference to the maze.
+
+        Args:
+            maze: The MazeGenerator instance containing the grid layout
+                  and dimensions.
+
+        Attributes:
+            maze (MazeGenerator): Reference to the game maze grid and
+                                  dimensions.
+            display_enemy (str): The visual character representing the enemy.
+            enemy_x (int): The current X-coordinate of the enemy.
+            enemy_y (int): The current Y-coordinate of the enemy.
+        """
         self.maze = maze
         self.display_enemy = "🦖"
         self.enemy_x = 0
         self.enemy_y = 0
 
     def spawn(self) -> None:
+        """Determines and sets the initial spawn location of the enemy.
+
+        Scans the maze starting from the bottom-right corner (near the exit)
+        to find the first valid empty cell. This ensures the enemy starts
+        as far away from the player as possible.
+        """
         player_x, player_y = self.maze.entry_coord
 
         target_x = self.maze.width - 2
@@ -65,9 +95,17 @@ class Enemy():
             print("Warning: No empty space found for enemy, defaulting to 1,1")
             self.enemy_x, self.enemy_y = 1, 1
 
-        self.maze.maze[(self.enemy_x, self.enemy_y)] = "maze.enemy"
-
     def move(self, player_x: int, player_y: int) -> None:
+        """Calculates and executes the next move towards the player.
+
+        Uses a Breadth-First Search (BFS) algorithm to find the shortest
+        path from the enemy's current position to the player's position.
+        The enemy moves one step along this path.
+
+        Args:
+            player_x: The current X-coordinate of the player.
+            player_y: The current Y-coordinate of the player.
+        """
         directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         start = (self.enemy_x, self.enemy_y)
         end = (player_x, player_y)
