@@ -185,9 +185,24 @@ There is also a `count` number to try to solve the maze with the fewest possible
 
 The rule `make play` will auto-install the library in the virtual environment if it not already installed.
 
-<div align="center">
-  <img src="assets_github/maze_play_mode.gif" alt="Démonstration" width="300" />
-</div>
+<table width="100%">
+  <tr>
+    <th width="30%" align="center">Normal mode</th>
+	<th width="30%" align="center">Hunted</th>
+	<th width="30%" align="center">Fog of war</th>
+	</tr>
+  <tr>
+    <td>
+      <img src="assets_github/maze_play_mode.gif" alt="Demo play mode" width="100%">
+    </td>
+    <td>
+      <img src="assets_github/maze_play_fogofwar.gif" alt="Demo fog of war" width="100%">
+    </td>
+    <td>
+      <img src="assets_github/maze_play_hunted.gif" alt="Demo hunted" width="100%">
+    </td>
+  </tr>
+</table>
 
 ---
 
