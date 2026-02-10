@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/02 08:52:18 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 15:50:08 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/10 13:21:08 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -155,7 +155,7 @@ class MazeSolver():
 
                     visited.add(neighbor)
                     if explore_recursive(neighbor_x, neighbor_y, visited):
-                        return None
+                        return True
                     visited.remove(neighbor)
             return False
 
