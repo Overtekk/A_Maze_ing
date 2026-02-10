@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/10 13:16:39 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/10 14:33:58 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -14,8 +14,8 @@
 
 This module serves as the entry point for the "play" mode. It initializes
 the game environment based on a configuration file, prompts the user to
-select a play mode (Normal or Fog of War), and enters the main interactive loop
-where keyboard inputs control the character.
+select a play mode, and enters the main interactive loop where keyboard inputs
+control the character.
 """
 
 import sys
@@ -37,8 +37,8 @@ def launch_game() -> None:
     """Initializes the game environment and selects the game mode.
 
     Attempts to load the configuration from 'play/config.txt'. If successful,
-    it prompts the user to choose between 'Normal' and 'Fog of War' modes,
-    generates the maze accordingly, and passes control to the `play` loop.
+    it prompts the user to choose the game mode, generates the maze
+    accordingly, and passes control to the `play` loop.
 
     Catches and logs configuration or generation errors to stderr to ensure
     a clean exit on failure.
@@ -101,7 +101,7 @@ def play(maze: "MazeGenerator", gamemode: str) -> None:
     Args:
         maze: The `MazeGenerator` instance containing the grid and
               logic to be played.
-        gamemode: A string indicating the active mode ("normal" or "fow").
+        gamemode: A string indicating the active mode.
                   If "fow" (Fog of War) is selected, only the surrounding of
                   the player is rendered as he walk throught.
     """
@@ -241,11 +241,11 @@ def play(maze: "MazeGenerator", gamemode: str) -> None:
                     render_fow(old_x, old_y)
 
                 if gamemode == "enemy":
-                    if maze.maze[(enemy.enemy_x, enemy.enemy_y)] == MAZE.exit:
+                    if (enemy.enemy_x == maze.exit_x and
+                            enemy.enemy_y == maze.exit_y):
                         old_enemy_x = enemy.enemy_x
                         old_enemy_y = enemy.enemy_y
-                        if maze.display in (DISPLAY_MODE.ascii,
-                                            DISPLAY_MODE.simple):
+                        if maze.display == DISPLAY_MODE.emoji:
                             print(Cursor.POS((old_enemy_x * maze.step_x) + 1,
                                   old_enemy_y + maze.y_offset) +
                                   f"{maze.visual_exit}{COLORS.reset}", end="",
