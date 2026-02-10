@@ -17,6 +17,8 @@ VENV_PIP = $(VENV_PATH)/bin/pip
 PYTHON = $(if $(wildcard $(VENV_PYTHON)), $(VENV_PYTHON), python3)
 PIP = $(if $(wildcard $(VENV_PIP)), $(VENV_PIP), pip)
 
+PY_PATH = PYTHONPATH=.:src
+
 MYPY_FLAGS= --warn-return-any --warn-unused-ignores --ignore-missing-imports \
 			--disallow-untyped-defs --check-untyped-defs
 
@@ -36,12 +38,12 @@ install:
 
 # Run the main script of the project.
 run:
-				@$(PYTHON) a_maze_ing.py $(CONFIG)
+				@$(PY_PATH) $(PYTHON) a_maze_ing.py $(CONFIG)
 
 # Run the main script in debug mode.
 debug:
 				@echo "$(YELLOW)Running in DEBUG mode$(RESET)"
-				@$(PYTHON) -m pdb a_maze_ing.py
+				@$(PY_PATH) $(PYTHON) -m pdb a_maze_ing.py
 
 # Remove temporary files or caches.
 clean:
@@ -83,7 +85,7 @@ play:
 						$(PIP) install readchar; \
 						echo "$(GREEN)✔ Success, readchar installed!$(RESET)"; \
 				fi
-				@$(PYTHON) play/launch.py play/config_play.txt
+				@$(PY_PATH) $(PYTHON) play/launch.py play/config_play.txt
 
 # Colors
 RESET=\033[0m
