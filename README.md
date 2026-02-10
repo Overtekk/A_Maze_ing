@@ -244,6 +244,7 @@ Finally, all the algorithms are in **src/maze/algorithms/**.
 
 ```python
 from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGenerationError
+from maze.maze_customization import MAZE, DISPLAY_MODE
 ```
 
 - MazeConfig — base model class checking configuration and creating the config object.

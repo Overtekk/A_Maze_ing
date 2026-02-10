@@ -11,6 +11,7 @@ This module contains the maze generation logic, and the solving part. You can ch
 
 ```python
 from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGenerationError
+from maze.maze_customization import MAZE, DISPLAY_MODE
 ```
 
 - MazeConfig — base model class checking configuration and creating the config object.
