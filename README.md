@@ -259,6 +259,7 @@ from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGen
 
 import sys
 from maze import MazeConfig, MazeGenerator, MazeSolver, MazeConfigError, MazeGenerationError
+from maze.maze_customization import MAZE, DISPLAY_MODE
 
 # Generate the config object with custom parameters.
 try:
@@ -288,6 +289,43 @@ try:
 except (FileNotFoundError, ValueError, MazeConfigError, MazeGenerationError) as e:
     print(f"{type(e).__name__}: {e}", file=sys.stderr)
 ```
+
+<br>
+
+#### For maze_customization:
+
+Our maze use Enum class type to customize the maze:
+- **MAZE**: is used to check each cell. For example: `MAZE.empty` is an empty cell. So you can do something like
+
+```python
+# Check if coords are of type empty.
+if generator.maze[(x, y)] == MAZE.empty:
+	# do something
+```
+
+|Name|Value|
+|:---:|:--:|
+|EMPTY|0|
+|WALL|1|
+|EXIT|2|
+|ENTRY|3|
+|FORTYTWO|4|
+
+- **DISPLAY_MODE**: is used to check the display mode.
+```python
+# Check if display is of type emoji.
+if generator.display == DISPLAY_MODE.emoji:
+	# do something
+```
+
+|Name|Value|
+|:---:|:--:|
+|ASCII|ascii|
+|EMOJI|emoji|
+|SIMPLE|simple|
+
+> [!NOTE]
+> "simple" is used for the debug mode, so things may not works like usual.
 
 ---
 
