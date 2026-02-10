@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/07 08:05:31 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/10 11:57:06 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/10 13:16:39 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -51,7 +51,7 @@ def launch_game() -> None:
         print(f"{COLORS.magenta}{STYLE.bright}\nChoose gamemode:")
         print(f"{COLORS.lightcyan}1. Normal")
         print(f"{COLORS.lightcyan}2. Fog of war")
-        print(f"{COLORS.lightcyan}3. Enemy{STYLE.reset}")
+        print(f"{COLORS.lightcyan}3. Hunted{STYLE.reset}")
 
         while True:
             user_choice = input(f"{COLORS.lightgreen}Choice (1-3): "
@@ -80,7 +80,7 @@ def launch_game() -> None:
             maze.maze_generator(rendering=False)
         else:
             gamemode = "enemy"
-            print(f"{COLORS.green}✅ Launching 'enemy play mode'\n")
+            print(f"{COLORS.green}✅ Launching 'hunted play mode'\n")
             sleep(1)
             print(ANIM.clear_screen, end="")
             maze.maze_generator(rendering=True)
@@ -241,10 +241,25 @@ def play(maze: "MazeGenerator", gamemode: str) -> None:
                     render_fow(old_x, old_y)
 
                 if gamemode == "enemy":
-                    print(Cursor.POS((enemy.enemy_x * maze.step_x) + 1,
-                          enemy.enemy_y + maze.y_offset) +
-                          f"{maze.visual_empty}{COLORS.reset}",
-                          end="", flush=True)
+                    if maze.maze[(enemy.enemy_x, enemy.enemy_y)] == MAZE.exit:
+                        old_enemy_x = enemy.enemy_x
+                        old_enemy_y = enemy.enemy_y
+                        if maze.display in (DISPLAY_MODE.ascii,
+                                            DISPLAY_MODE.simple):
+                            print(Cursor.POS((old_enemy_x * maze.step_x) + 1,
+                                  old_enemy_y + maze.y_offset) +
+                                  f"{maze.visual_exit}{COLORS.reset}", end="",
+                                  flush=True)
+                        else:
+                            print(Cursor.POS((old_enemy_x * maze.step_x) + 1,
+                                  old_enemy_y + maze.y_offset) +
+                                  f"{COLORS.red}{maze.visual_wall}"
+                                  f"{COLORS.reset}", end="", flush=True)
+                    else:
+                        print(Cursor.POS((enemy.enemy_x * maze.step_x) + 1,
+                              enemy.enemy_y + maze.y_offset) +
+                              f"{maze.visual_empty}{COLORS.reset}",
+                              end="", flush=True)
 
                     enemy.move(new_x, new_y)
 

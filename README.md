@@ -181,6 +181,7 @@ There is also a `count` number to try to solve the maze with the fewest possible
 2 modes are available:
 - **Normal mode**: Starting from the entry point (magenta), find your way throught the maze and go to the exit (red).
 - **Fog of war**: Starting from the entry point (magenta), find your way throught the maze that is rendered over as you go throught it.
+- **Hunted**: Find the exit while a dinosaure is chasing you. If it touch you, you'll lose.
 
 The rule `make play` will auto-install the library in the virtual environment if it not already installed.
 
