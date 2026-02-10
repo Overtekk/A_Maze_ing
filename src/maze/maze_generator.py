@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/09 15:39:38 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/10 13:20:42 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -236,28 +236,6 @@ class MazeGenerator():
         #         self.break_wall(start_x, start_y + 1, rendering)
         #         self.break_wall(start_x, start_y + 2, rendering)
 
-        path_number = solver.path_checker()
-        if self.perfect is False and path_number == 1:
-            while path_number == 1:
-                x = random.randint(1, self.width - 2)
-                y = random.randint(1, self.height - 2)
-                if (self.maze[(x, y)] == MAZE.wall and
-                        self._is_breakable(x, y)):
-                    self.break_wall(x, y, rendering)
-                path_number = solver.path_checker()
-        for ty in range(1, self.height - 1, 1):
-            for tx in range(1, self.width - 1, 1):
-                if self.maze[(tx, ty)] == MAZE.empty:
-                    if (self.maze[(tx, ty + 1)] == MAZE.empty and
-                        self.maze[(tx + 1, ty + 1)] == MAZE.empty and
-                        self.maze[(tx + 1, ty)] == MAZE.empty and
-                        self.maze[(tx + 1, ty - 1)] == MAZE.empty and
-                        self.maze[(tx, ty - 1)] == MAZE.empty and
-                        self.maze[(tx - 1, ty - 1)] == MAZE.empty and
-                        self.maze[(tx - 1, ty)] == MAZE.empty and
-                            self.maze[(tx - 1, ty + 1)] == MAZE.empty):
-                        self.maze[(tx, ty)] = MAZE.wall
-
         maze_output(self, solver.path)
 
         # Put the cursor at the bottom of the screen
@@ -412,6 +390,9 @@ class MazeGenerator():
 
         elif self.algorithm == ALGO_MODE.hunt_kill:
             hunt_and_kill(self, rendering)
+            if not self.perfect:
+                from .algorithms.hunt_and_kill import break_walls_hak
+                break_walls_hak(self, rendering)
 
     def _correcting_coords(self) -> None:
         """Adjusts dimensions and coordinates to satisfy algorithm constraints.

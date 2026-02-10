@@ -5,7 +5,7 @@ WIDTH=12
 HEIGHT=12
 
 # Entry coordinates (x,y)
-ENTRY=7,8
+ENTRY=1,1
 
 # Exit coordinates (x,y)
 EXIT=5,5
@@ -14,7 +14,7 @@ EXIT=5,5
 OUTPUT_FILE=maze.txt
 
 # Is the maze perfect?
-PERFECT=False
+PERFECT=true
 
 # The seed to use (Optional)
 # SEED=42
