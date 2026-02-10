@@ -187,9 +187,8 @@ The rule `make play` will auto-install the library in the virtual environment if
 
 <table width="100%">
   <tr>
-    <th width="30%" align="center">Normal mode</th>
-	<th width="30%" align="center">Hunted</th>
-	<th width="30%" align="center">Fog of war</th>
+    <th width="40%" align="center">Normal mode</th>
+	<th width="40%" align="center">Fog of war</th>
 	</tr>
   <tr>
     <td>
@@ -198,8 +197,16 @@ The rule `make play` will auto-install the library in the virtual environment if
     <td>
       <img src="assets_github/maze_play_fogofwar.gif" alt="Demo fog of war" width="100%">
     </td>
-    <td>
-      <img src="assets_github/maze_play_hunted.gif" alt="Demo hunted" width="100%">
+  </tr>
+</table>
+
+<table width="50%">
+  <tr>
+    <th width="50%" align="center">Hunted</th>
+	</tr>
+  <tr>
+	<td>
+      <img src="assets_github/maze_play_hunted.gif" alt="Demo hunted" width="50%">
     </td>
   </tr>
 </table>
