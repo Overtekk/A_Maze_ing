@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/10 15:28:22 by roandrie        ###   ########.fr        #
+#  Updated: 2026/02/11 12:59:26 by rruiz           ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -67,10 +67,10 @@ class MazeGenerator():
         self.cfg = config
 
         # Export config into the class.
-        self.width = config.width
-        self.height = config.height
-        self.entry_coord = config.entry
-        self.exit_coord = config.exit
+        self.width = config.width * 2
+        self.height = config.height * 2
+        self.entry_coord = (config.entry[0] * 2, config.entry[1] * 2)
+        self.exit_coord = (config.exit[0], config.exit[1])
         self.output_file = config.output_file
         self.perfect = config.perfect
         self.seed = config.seed
