@@ -1,14 +1,14 @@
 # Maze width (number of cells)
-WIDTH=25
+WIDTH=10
 
 # Maze height
-HEIGHT=25
+HEIGHT=10
 
 # Entry coordinates (x,y)
-ENTRY=22,16
+ENTRY=2,9
 
 # Exit coordinates (x,y)
-EXIT=18,6
+EXIT=9,3
 
 # Output filename
 OUTPUT_FILE=maze.txt
@@ -17,7 +17,7 @@ OUTPUT_FILE=maze.txt
 PERFECT=true
 
 # The seed to use (Optional)
-# SEED=42
+SEED=42
 
 # Display mode (Optional)
 # Valid = "emoji" (default) | "ascii"

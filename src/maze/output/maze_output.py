@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/11 12:11:23 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/11 14:31:27 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -54,16 +54,23 @@ def maze_output(generator: Any, path: Any) -> None:
                 f.write(hexa[decimal_val])
             f.write("\n")
         f.write('\n')
-        entry_x, entry_y = generator.entry_coord
+
+        entry_x = (generator.entry_coord[0] - 1) // 2
+        entry_y = (generator.entry_coord[1] - 1) // 2
         f.write(f"{entry_x},{entry_y}\n")
-        exit_x, exit_y = generator.exit_coord
+
+        exit_x = (generator.exit_coord[0] - 1) // 2
+        exit_y = (generator.exit_coord[1] - 1) // 2
         f.write(f"{exit_x},{exit_y}\n")
-        path.append((entry_x, entry_y))
+
+        if generator.entry_coord not in path:
+            path.append(generator.entry_coord)
+
         path.reverse()
         directions = []
-        for i in range(len(path) - 1):
+        for i in range(0, len(path) - 2, 2):
             current_move = path[i]
-            next_move = path[i + 1]
+            next_move = path[i + 2]
 
             dir_x = next_move[0] - current_move[0]
             dir_y = next_move[1] - current_move[1]

@@ -6,7 +6,7 @@
 #  By: roandrie, rruiz                           +#+  +:+       +#+         #
 #                                              +#+#+#+#+#+   +#+            #
 #  Created: 2026/01/22 12:07:28 by roandrie        #+#    #+#               #
-#  Updated: 2026/02/11 12:59:26 by rruiz           ###   ########.fr        #
+#  Updated: 2026/02/11 14:54:23 by roandrie        ###   ########.fr        #
 #                                                                           #
 # ************************************************************************* #
 
@@ -58,6 +58,8 @@ class MazeGenerator():
         randomization based on it. Correct the coordinates (entry, exit, grid)
         for no errors in the algorithm generation. And create the variable maze
         that will contain all the maze informations.
+        Scales the dimensions from a cell-based grid to a block-based grid
+        (2N + 1) to accommodate walls as physical coordinates.
 
         Args:
             config: MazeConfig containing all the config validate by the
@@ -65,12 +67,11 @@ class MazeGenerator():
         """
         # Import config.
         self.cfg = config
-
         # Export config into the class.
-        self.width = config.width * 2
-        self.height = config.height * 2
-        self.entry_coord = (config.entry[0] * 2, config.entry[1] * 2)
-        self.exit_coord = (config.exit[0], config.exit[1])
+        self.width = config.width * 2 + 1
+        self.height = config.height * 2 + 1
+        self.entry_coord = (config.entry[0] * 2 + 1, config.entry[1] * 2 + 1)
+        self.exit_coord = (config.exit[0] * 2 + 1, config.exit[1] * 2 + 1)
         self.output_file = config.output_file
         self.perfect = config.perfect
         self.seed = config.seed
@@ -225,16 +226,6 @@ class MazeGenerator():
                 print(Cursor.POS(1, self.height + self.y_offset))
             raise MazeGenerationError("This maze cannot be resolve. Omg, "
                                       "this is so rare!")
-
-        # start_x, start_y = self.entry_coord
-        # if (start_x == self.width // 2 and
-        #     self.height // 2 - 1 <= start_y <= self.height // 2 + 1):
-        #     if self.maze[(start_x, start_y - 2)] == MAZE.empty:
-        #         self.break_wall(start_x, start_y - 1, rendering)
-        #         self.break_wall(start_x, start_y - 2, rendering)
-        #     elif self.maze[(start_x, start_y + 2)] == MAZE.empty:
-        #         self.break_wall(start_x, start_y + 1, rendering)
-        #         self.break_wall(start_x, start_y + 2, rendering)
 
         maze_output(self, solver.path)
 
@@ -395,118 +386,51 @@ class MazeGenerator():
                 break_walls_hak(self, rendering)
 
     def _correcting_coords(self) -> None:
-        """Adjusts dimensions and coordinates to satisfy algorithm constraints.
+        """Validates and clamps entry/exit points to the nearest valid passage.
 
-        Ensures the grid dimensions are odd (required by algorithms like
-        Recursive Backtracking) by incrementing width/height if necessary.
-        It also:
-        - Adjusts entry/exit coordinates to align with the valid grid logic.
-        - Checks and shifts the exit position to prevent it from spawning
-          inside the reserved '42' pattern area.
+        Ensures coordinates are odd-indexed to reside within passage blocks
+        and prevents spawning inside the reserved '42' pattern or outside
+        the grid boundaries.
         """
-        if self.entry_coord[0] == 0:
-            self.entry_coord = (self.entry_coord[0] + 1, self.entry_coord[1])
-            self.exit_coord = (self.exit_coord[0] + 1, self.exit_coord[1])
-            self.width += 1
 
-        if self.entry_coord[1] == 0:
-            self.entry_coord = (self.entry_coord[0], self.entry_coord[1] + 1)
-            self.exit_coord = (self.exit_coord[0], self.exit_coord[1] + 1)
-            self.height += 1
+        def clamp_to_odd(value: int, max_value: int) -> int:
+            """Clamps a coordinate to the nearest odd index within bounds."""
+            if value < 1:
+                return 1
+            if value >= max_value - 1:
+                last_index = max_value - 2
 
-        if self.entry_coord[0] % 2 == 0:
-            if random.choice([True, False]):
-                self.entry_coord = (self.entry_coord[0] + 1,
-                                    self.entry_coord[1])
-                if self.entry_coord == self.exit_coord:
-                    self.entry_coord = (self.entry_coord[0] - 2,
-                                        self.entry_coord[1])
-            else:
-                self.entry_coord = (self.entry_coord[0] - 1,
-                                    self.entry_coord[1])
-                if self.entry_coord == self.exit_coord:
-                    self.entry_coord = (self.entry_coord[0] + 2,
-                                        self.entry_coord[1])
+                if last_index % 2 == 0:
+                    return last_index - 1
+                return last_index
+            if value % 2 == 0:
+                return value + 1
 
-        if self.entry_coord[1] % 2 == 0:
-            if random.choice([True, False]):
-                self.entry_coord = (self.entry_coord[0],
-                                    self.entry_coord[1] + 1)
-                if self.entry_coord == self.exit_coord:
-                    self.entry_coord = (self.entry_coord[0],
-                                        self.entry_coord[1] - 2)
-            else:
-                self.entry_coord = (self.entry_coord[0],
-                                    self.entry_coord[1] - 1)
-                if self.entry_coord == self.exit_coord:
-                    self.entry_coord = (self.entry_coord[0],
-                                        self.entry_coord[1] + 2)
+            return value
 
-        if self.entry_coord[0] == 0:
-            self.entry_coord = (self.entry_coord[0] + 1, self.entry_coord[1])
-            self.exit_coord = (self.exit_coord[0] + 1, self.exit_coord[1])
+        ent_x, ent_y = self.entry_coord
+        ext_y, ext_y = self.exit_coord
 
-        if self.entry_coord[1] == 0:
-            self.entry_coord = (self.entry_coord[0], self.entry_coord[1] + 1)
-            self.exit_coord = (self.exit_coord[0], self.exit_coord[1] + 1)
+        # Coords adjustments;
+        self.entry_coord = (clamp_to_odd(ent_x, self.width),
+                            clamp_to_odd(ent_y, self.height))
+        self.exit_coord = (clamp_to_odd(ext_y, self.width),
+                           clamp_to_odd(ext_y, self.height))
 
-        if self.entry_coord[0] == self.width:
-            self.entry_coord = (self.entry_coord[0] - 1, self.entry_coord[1])
-            self.exit_coord = (self.exit_coord[0] - 1, self.exit_coord[1])
+        # Security : if entry and exit are in the same place.
+        if self.entry_coord == self.exit_coord:
+            new_ext = self.exit_coord[0] + 2
+            if new_ext >= self.width - 1:
+                new_ext = self.exit_coord[0] - 2
+            self.exit_coord = (new_ext, self.exit_coord[1])
 
-        if self.entry_coord[1] == self.height:
-            self.entry_coord = (self.entry_coord[0], self.entry_coord[1] - 1)
-            self.exit_coord = (self.exit_coord[0], self.exit_coord[1] - 1)
-
-        if self.algorithm in (ALGO_MODE.rb, ALGO_MODE.hunt_kill):
-            if self.width % 2 == 0:
-                self.width += 1
-            if self.height % 2 == 0:
-                self.height += 1
-
-            ft_pattern = ft_patt(self.width, self.height)
-
-            if self.exit_coord[0] % 2 == 0:
-                if (self.exit_coord[0] + 1 >= self.width - 1 or
-                    (self.exit_coord[0] + 1, self.exit_coord[1]) in
-                        ft_pattern):
-                    self.exit_coord = (self.exit_coord[0] - 1,
-                                       self.exit_coord[1])
-                else:
-                    if ((self.exit_coord[0] - 1, self.exit_coord[1]) in
-                            ft_pattern):
-                        self.exit_coord = (self.exit_coord[0] + 1,
-                                           self.exit_coord[1])
-                    else:
-                        if ((self.exit_coord[0], self.exit_coord[1] - 1) in
-                                ft_pattern):
-                            self.exit_coord = (self.exit_coord[0],
-                                               self.exit_coord[1] + 1)
-                        else:
-                            if random.choice([True, False]):
-                                self.exit_coord = (self.exit_coord[0] + 1,
-                                                   self.exit_coord[1])
-                            else:
-                                self.exit_coord = (self.exit_coord[0] - 1,
-                                                   self.exit_coord[1])
-            if self.exit_coord[1] % 2 == 0:
-                if (self.exit_coord[1] + 1 >= self.width - 1 or
-                    (self.exit_coord[1] + 1, self.exit_coord[1]) in
-                        ft_pattern):
-                    self.exit_coord = (self.exit_coord[0],
-                                       self.exit_coord[1] - 1)
-                else:
-                    if random.choice([True, False]):
-                        self.exit_coord = (self.exit_coord[0],
-                                           self.exit_coord[1] + 1)
-                    else:
-                        self.exit_coord = (self.exit_coord[0],
-                                           self.exit_coord[1] - 1)
-
-        if self.exit_coord[0] >= self.width - 1:
-            self.exit_coord = (self.width - 2, self.exit_coord[1])
-        if self.exit_coord[1] >= self.height - 1:
-            self.exit_coord = (self.exit_coord[0], self.height - 2)
+        # Avoid 42 pattern.
+        ft_pattern = ft_patt(self.width, self.height)
+        while self.exit_coord in ft_pattern:
+            new_entry_y = self.exit_coord[1] + 2
+            if new_entry_y >= self.height - 1:
+                new_entry_y = self.exit_coord[1] - 4
+            self.exit_coord = (self.exit_coord[0], new_entry_y)
 
     def _fill_maze(self) -> None:
         """Initializes the grid with the starting state.
@@ -517,9 +441,9 @@ class MazeGenerator():
         """
         for y in range(self.height):
             for x in range(self.width):
-                if x == self.entry_x and y == self.entry_y:
+                if (x, y) == self.entry_coord:
                     self.maze[(x, y)] = MAZE.entry
-                elif x == self.exit_x and y == self.exit_y:
+                elif (x, y) == self.exit_coord:
                     self.maze[(x, y)] = MAZE.exit
                 elif (x, y) in self.fourtytwo_coord:
                     self.maze[(x, y)] = MAZE.fortytwo
