@@ -1,13 +1,16 @@
-# ************************************************************************* #
-#                                                                           #
-#                                                      :::      ::::::::    #
-#  maze_output.py                                    :+:      :+:    :+:    #
-#                                                  +:+ +:+         +:+      #
-#  By: roandrie, rruiz                           +#+  +:+       +#+         #
-#                                              +#+#+#+#+#+   +#+            #
-#  Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #
-#  Updated: 2026/02/11 14:31:27 by roandrie        ###   ########.fr        #
-#                                                                           #
+#*****************************************************************************#
+#                                :::       ::::::::                           #
+#                              :+:       :+:    :+:                           #
+#                            +:+ +:+           +:+                            #
+#                           +#+  +:+         +#+                              #
+#                          +#+#+#+#+#+     +#+                                #
+#                              #+#      ##########                            #
+#*****************************************************************************#
+# File: maze_output.py                                                        #
+# By: rruiz <rruiz@student.42.fr>                                             #
+# Created: 2026/02/03 10:56:40 by rruiz           #+#    #+#               #  #
+# Updated: 2026/02/12 10:18:20 by rruiz                                       #
+#*****************************************************************************#
 # ************************************************************************* #
 
 """Utilities for exporting the generated maze to a text file.
@@ -39,17 +42,18 @@ def maze_output(generator: Any, path: Any) -> None:
     """
     hexa = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C",
             "D", "E", "F"]
+    targets = (MAZE.wall, generator.fourtytwo_coord)
     with open(generator.output_file, 'w') as f:
         for ty in range(1, generator.height - 1, 2):
             for tx in range(1, generator.width - 1, 2):
                 decimal_val = 0
-                if generator.maze[(tx, ty - 1)] == MAZE.wall:
+                if generator.maze[(tx, ty - 1)] in targets:
                     decimal_val = decimal_val + 2**0
-                if generator.maze[(tx + 1, ty)] == MAZE.wall:
+                if generator.maze[(tx + 1, ty)] in targets:
                     decimal_val = decimal_val + 2**1
-                if generator.maze[(tx, ty + 1)] == MAZE.wall:
+                if generator.maze[(tx, ty + 1)] in targets:
                     decimal_val = decimal_val + 2**2
-                if generator.maze[(tx - 1, ty)] == MAZE.wall:
+                if generator.maze[(tx - 1, ty)] in targets:
                     decimal_val = decimal_val + 2**3
                 f.write(hexa[decimal_val])
             f.write("\n")
